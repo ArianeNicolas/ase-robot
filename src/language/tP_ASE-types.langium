@@ -72,6 +72,7 @@ interface Rotation extends RobotLogic {
 
 interface setSpeed extends RobotFunc {
 	unit: Unit
+	speed: Int
 }
 
 interface RobotFunc extends RobotLogic, Expression {
@@ -89,9 +90,13 @@ interface declaVar extends Statement {
 	expression: Expression
 }
 
-interface FunCall extends Statement, ArithmeticExpression, BoolExpression {
+interface FunCall extends Statement, SingleValue, SingleValueBool {
 	name?: Str
 	expression: Expression[]
+}
+
+interface SingleValue extends ArithmeticExpression {
+
 }
 
 interface Return extends Statement {
@@ -103,71 +108,74 @@ interface AssignVar extends Statement {
 	expression: Expression
 }
 
-interface Var extends ArithmeticExpression, BoolExpression {
+interface Var extends SingleValue, SingleValueBool {
 	name?: Str
 }
 
 interface LeftSide extends Movement {
 }
 
-interface Lower extends ArithmeticCondition {
-}
-
 interface ArithmeticCondition extends Condition {
-	arithmeticexpression1: ArithmeticExpression
-	arithmeticexpression2: ArithmeticExpression
+	arithmeticexpression: ArithmeticExpression[]
 }
+interface Comparison extends ArithmeticCondition {
 
-interface Greater extends ArithmeticCondition {
 }
+// interface Lower extends ArithmeticCondition {
+// }
 
-interface EqualInt extends ArithmeticCondition {
-}
+// interface Greater extends ArithmeticCondition {
+// }
+
+// interface EqualInt extends ArithmeticCondition {
+// }
+// interface NotEqualInt extends ArithmeticCondition {
+// }
 
 interface EqualBool extends BoolCondition {
+	singlevaluebool: SingleValueBool[]
 }
 
 interface NotEqualBool extends BoolCondition {
+	singlevaluebool: SingleValueBool[]
 }
 
-interface NotEqualInt extends ArithmeticCondition {
-}
 
 interface BoolCondition extends Condition, BoolExpression {
-	booleanexpression1: BoolExpression
-	booleanexpression2: BoolExpression
 }
 
+interface SingleValueBool extends BoolCondition{}
 
-
-interface And extends BoolCondition {
+interface And extends BoolCondition{
+	singlevaluebool?: SingleValueBool[]
+	comparison?: Comparison[]
 }
+
 
 interface Or extends BoolCondition {
+	and?: And[]
+	comparison?: Comparison[]
 }
 
-interface ConstInt extends ArithmeticExpression {
+interface ConstInt extends SingleValue {
 	integerValue?: Int
 }
 
 interface Addition extends ArithmeticOperation {
+	multiplication: Multiplication[]
 }
 
 interface ArithmeticOperation extends ArithmeticExpression {
-	arithmeticexpression1: ArithmeticExpression
-	arithmeticexpression2: ArithmeticExpression
+	
 }
 
-interface Substraction extends ArithmeticOperation {
-}
 
 interface Multiplication extends ArithmeticOperation {
+	singlevalue: SingleValue[]
 }
 
-interface Division extends ArithmeticOperation {
-}
 
-interface ConstBool extends BoolExpression {
+interface ConstBool extends SingleValueBool {
 	BoolValue?: Boolean
 }
 

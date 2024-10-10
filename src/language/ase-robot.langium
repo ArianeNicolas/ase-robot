@@ -4,7 +4,7 @@ import 'tP_ASE-types'
 import 'XMLType-types'
 
 entry Program returns Program:
-    'Program' '{' Func+=Func  (Func+=Func  )* '}'  
+    Func+=Func  (Func+=Func  )* 
 ;
 
 Statement returns Statement:
@@ -27,37 +27,46 @@ Unit returns Unit:
     mm | cm 
 ;
 
-ArithmeticExpression returns ArithmeticExpression:
-    ConstInt | Addition | Substraction | Multiplication | Division | FunCall | Var
+SingleValue returns SingleValue:
+    FunCall | Var | ConstInt
 ;
 
+SingleValueBool returns SingleValueBool:
+    ConstBool | Var | FunCall
+;
+
+ArithmeticExpression returns ArithmeticExpression:
+    Addition | SingleValue | Multiplication
+; 
+
 BoolExpression returns BoolExpression:
-    ConstBool | BoolCondition | FunCall | Var
+    SingleValueBool | BoolCondition
 ;
 
 ArithmeticCondition returns ArithmeticCondition:
-    Lower | Greater | EqualInt | NotEqualInt
+    Comparison
 ;
 
 BoolCondition returns BoolCondition:
-    EqualBool | NotEqualBool | And | Or 
+    EqualBool | NotEqualBool | Or 
 ;
 
+
 Func returns Func:
-    'let' ^type=Type name=STRING '(' (parameter+=Parameter  ("," parameter+=Parameter  )*)? ')' '{' (statement+=Statement  (statement+=Statement  )*) ? '}'  
+    'let' ^type=Type name=ID '(' (parameter+=Parameter  ("," parameter+=Parameter  )*)? ')' '{' (statement+=Statement  (statement+=Statement  )*) ? '}'  
 ;
 
 
 Parameter returns Parameter:
-    ^type=Type name=STRING 
+    ^type=Type name=ID 
 ;
 
 If returns If:
-    'If' condition=Condition '{' (statement+=Statement)* '}'  
+    'if' condition=Condition '{' (statement+=Statement)* '}'  
 ;
 
 Loop returns Loop:
-    'Loop' condition=Condition '{' (statement+=Statement)* '}'  
+    'loop' condition=Condition '{' (statement+=Statement)* '}'  
 ;
 
 Front returns Front:
@@ -77,7 +86,7 @@ Rotation returns Rotation:
 ;
 
 setSpeed returns setSpeed:
-    'setSpeed('unit=Unit ')'  
+    'setSpeed(' speed=INT unit=Unit ')'  
 ;
 
 getDistance returns getDistance:
@@ -89,11 +98,11 @@ getTimestamp returns getTimestamp:
 ;
 
 declaVar returns declaVar:
-    'var' ^type=Type name=STRING '=' expression=Expression  
+    'var' ^type=Type name=ID '=' expression=Expression  
 ;
 
 FunCall returns FunCall:
-    name=STRING '(' (expression+=Expression  ("," expression+=Expression)*)? ')'  
+    name=ID '(' (expression+=Expression  ("," expression+=Expression)*)? ')'  
 ;
 
 Return returns Return:
@@ -108,35 +117,38 @@ LeftSide returns LeftSide:
     'LeftSide' expression=Expression unit1=Unit  
 ;
 
-Lower returns Lower:
-    arithmeticexpression1=ArithmeticExpression '<' arithmeticexpression2=ArithmeticExpression
+Comparison returns Comparison:
+    arithmeticexpression+=ArithmeticExpression (('<' | '>' | '==' | '!=') arithmeticexpression+=ArithmeticExpression)*
 ;
+// Lower returns Lower:
+//     arithmeticexpression+=ArithmeticExpression ('<' arithmeticexpression+=ArithmeticExpression)*
+// ;
 
-Greater returns Greater:
-    arithmeticexpression1=ArithmeticExpression '>' arithmeticexpression2=ArithmeticExpression
-;
+// Greater returns Greater:
+//     arithmeticexpression+=ArithmeticExpression ('>' arithmeticexpression+=ArithmeticExpression)*
+// ;
 
-EqualInt returns EqualInt:
-    arithmeticexpression1=ArithmeticExpression '==' arithmeticexpression2=ArithmeticExpression  
-;
+// EqualInt returns EqualInt:
+//     arithmeticexpression+=ArithmeticExpression ('==' arithmeticexpression+=ArithmeticExpression)* 
+// ;
 
-NotEqualInt returns NotEqualInt:
-    arithmeticexpression1=ArithmeticExpression '!=' arithmeticexpression2=ArithmeticExpression
-;
+// NotEqualInt returns NotEqualInt:
+//     arithmeticexpression+=ArithmeticExpression ('!=' arithmeticexpression+=ArithmeticExpression)*
+// ;
 EqualBool returns EqualBool:
-    booleanexpression1=BoolExpression '==' booleanexpression2=BoolExpression
+    singlevaluebool+=SingleValueBool '==' singlevaluebool+=SingleValueBool
 ;
 
 NotEqualBool returns NotEqualBool:
-    booleanexpression1=BoolExpression '!=' booleanexpression2=BoolExpression
+    singlevaluebool+=SingleValueBool '!=' singlevaluebool+=SingleValueBool
 ;
 
 And returns And:
-    booleanexpression1=BoolExpression 'and' booleanexpression2=BoolExpression
+    (singlevaluebool+=SingleValueBool | comparison+=Comparison) (('and' (singlevaluebool+=SingleValueBool | comparison+=Comparison))*)?
 ;
 
 Or returns Or:
-    booleanexpression1=BoolExpression 'or' booleanexpression2=BoolExpression  
+    (and+=And | comparison+=Comparison) (('or' (and+=And | comparison+=Comparison) )*)?
 ;
 
 ConstInt returns ConstInt:
@@ -144,23 +156,15 @@ ConstInt returns ConstInt:
 ;
 
 Addition returns Addition:
-    arithmeticexpression1=ArithmeticExpression '+' arithmeticexpression2=ArithmeticExpression  
-;
-
-Substraction returns Substraction:
-    arithmeticexpression1=ArithmeticExpression '-' arithmeticexpression2=ArithmeticExpression
+    multiplication+=Multiplication ('('? ('+'|'-') (multiplication+=Multiplication)*')'?)?
 ;
 
 Multiplication returns Multiplication:
-    arithmeticexpression1=ArithmeticExpression '*' arithmeticexpression2=ArithmeticExpression 
-;
-
-Division returns Division:
-    arithmeticexpression1=ArithmeticExpression '/' arithmeticexpression2=ArithmeticExpression  
+    singlevalue+=SingleValue ('('? ('*'|'/') (singlevalue+=SingleValue)*')'?)?
 ;
 
 Var returns Var:
-    name=STRING 
+    name=ID 
 ;
 
 ConstBool returns ConstBool:
@@ -176,14 +180,14 @@ cm returns cm:
 ;
 
 Nbr returns Nbr:
-    {Nbr} 'Nbr'  
+    {Nbr} 'number'  
 ;
 
 Bool returns Bool:
-    {Bool} 'Bool'  
+    {Bool} 'bool'  
 ;
 
 Void returns Void:
-    {Void} 'Void'  
+    {Void} 'void'  
 ;
 
