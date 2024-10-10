@@ -4,7 +4,7 @@ import 'tP_ASE-types'
 import 'XMLType-types'
 
 entry Program returns Program:
-    'Program' '{' 'Func' '{' Func+=Func  ("," Func+=Func  )* '}' '}'  
+    'Program' '{' Func+=Func  (Func+=Func  )* '}'  
 ;
 
 Statement returns Statement:
@@ -32,7 +32,7 @@ ArithmeticExpression returns ArithmeticExpression:
 ;
 
 Func returns Func:
-    'Func' '{' ('name' name=Str0  )? ('statement' '{' statement+=Statement  ("," statement+=Statement  )* '}' )? 'type' ^type=Type  ('parameter' '{' parameter+=Parameter  ("," parameter+=Parameter  )* '}' )? '}'  
+    'let' ^type=Type name=STRING '(' ('parameter' '{' parameter+=Parameter  ("," parameter+=Parameter  )* '}' )? ')' '{' (statement+=Statement  (statement+=Statement  )*) ? '}'  
 ;
 
 Str0 returns Str:
