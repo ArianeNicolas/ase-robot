@@ -1,0 +1,15 @@
+{
+    "projectName": "AseRobot",
+    "languages": [{
+        "id": "ase-robot",
+        "grammar": "src/language/ase-robot.langium",
+        "fileExtensions": [".rob"],
+        "textMate": {
+            "out": "syntaxes/ase-robot.tmLanguage.json"
+        },
+        "monarch": {
+            "out": "syntaxes/ase-robot.monarch.ts"
+        }
+    }],
+    "out": "src/language/generated"
+}
