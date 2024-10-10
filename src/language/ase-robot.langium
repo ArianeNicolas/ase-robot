@@ -16,11 +16,11 @@ Type returns Type:
 ;
 
 Condition returns Condition:
-    Lower | Greater | Equal | NotEqual | And | Or 
+    BoolCondition | ArithmeticCondition 
 ;
 
 Expression returns Expression:
-    setSpeed | getDistance | getTimestamp | ConstInt | Addition | Substraction | Multiplication | Division | Lower | Greater | Equal | NotEqual | FunCall | Var | ConstBool | And | Or 
+    setSpeed | getDistance | getTimestamp | ArithmeticExpression | BoolExpression | ArithmeticCondition
 ;
 
 Unit returns Unit:
@@ -28,143 +28,151 @@ Unit returns Unit:
 ;
 
 ArithmeticExpression returns ArithmeticExpression:
-    ConstInt | Addition | Substraction | Multiplication | Division | FunCall | Var 
+    ConstInt | Addition | Substraction | Multiplication | Division | FunCall | Var
+;
+
+BoolExpression returns BoolExpression:
+    ConstBool | BoolCondition | FunCall | Var
+;
+
+ArithmeticCondition returns ArithmeticCondition:
+    Lower | Greater | EqualInt | NotEqualInt
+;
+
+BoolCondition returns BoolCondition:
+    EqualBool | NotEqualBool | And | Or 
 ;
 
 Func returns Func:
-    'let' ^type=Type name=STRING '(' ('parameter' '{' parameter+=Parameter  ("," parameter+=Parameter  )* '}' )? ')' '{' (statement+=Statement  (statement+=Statement  )*) ? '}'  
+    'let' ^type=Type name=STRING '(' (parameter+=Parameter  ("," parameter+=Parameter  )*)? ')' '{' (statement+=Statement  (statement+=Statement  )*) ? '}'  
 ;
 
-Str0 returns Str:
-    'Str' 
-;
 
 Parameter returns Parameter:
-    'Parameter' '{' ('name' name=STRING )? 'type' ^type=Type  '}'  
+    ^type=Type name=STRING 
 ;
 
 If returns If:
-    'If' '{' 'condition' condition=Condition  ('statement' '{' statement+=Statement  ("," statement+=Statement  )* '}' )? '}'  
+    'If' condition=Condition '{' (statement+=Statement)* '}'  
 ;
 
 Loop returns Loop:
-    'Loop' '{' 'condition' condition=Condition  ('statement' '{' statement+=Statement  ("," statement+=Statement  )* '}' )? '}'  
+    'Loop' condition=Condition '{' (statement+=Statement)* '}'  
 ;
 
 Front returns Front:
-    'Front' '{' 'expression' expression=Expression  'unit1' unit1=Unit  '}'  
+    'Forward' expression=Expression unit1=Unit 
 ;
 
 Back returns Back:
-    'Back' '{' 'expression' expression=Expression  'unit1' unit1=Unit  '}'  
+    'Backward' expression=Expression unit1=Unit 
 ;
 
 RightSide returns RightSide:
-    'RightSide' '{' 'expression' expression=Expression  'unit1' unit1=Unit  '}'  
+    'Right' expression=Expression unit1=Unit
 ;
 
 Rotation returns Rotation:
-    {Rotation} 'Rotation' '{' ('angle' angle=Int0  )? '}'  
+    'Clock' angle=INT
 ;
 
 setSpeed returns setSpeed:
-    'setSpeed' '{' 'unit' unit=Unit  '}'  
+    'setSpeed('unit=Unit ')'  
 ;
 
 getDistance returns getDistance:
-    {getDistance} 'getDistance'  
+    {getDistance} 'getDistance()'  
 ;
 
 getTimestamp returns getTimestamp:
-    {getTimestamp} 'getTimestamp'  
+    {getTimestamp} 'getTimestamp()'  
 ;
 
 declaVar returns declaVar:
-    'declaVar' '{' ('name' name=Str0  )? 'type' ^type=Type  'expression' expression=Expression  '}'  
+    'var' ^type=Type name=STRING '=' expression=Expression  
 ;
 
 FunCall returns FunCall:
-    {FunCall} 'FunCall' '{' ('name' name=Str0  )? '}'  
+    name=STRING '(' (expression+=Expression  ("," expression+=Expression)*)? ')'  
 ;
 
 Return returns Return:
-    'Return' '{' 'expression' expression=Expression  '}'  
+    'return' expression=Expression
 ;
 
 AssignVar returns AssignVar:
-    'AssignVar' '{' 'var' var=Var  'expression' expression=Expression  '}'  
+    var=Var '=' expression=Expression  
 ;
 
 LeftSide returns LeftSide:
-    'LeftSide' '{' 'expression' expression=Expression  'unit1' unit1=Unit  '}'  
+    'LeftSide' expression=Expression unit1=Unit  
 ;
 
 Lower returns Lower:
-    'Lower' '{' 'expression' '{' expression+=Expression  ("," expression+=Expression  )* '}' 'arithmeticexpression' '{' arithmeticexpression+=ArithmeticExpression  ("," arithmeticexpression+=ArithmeticExpression  )* '}' '}'  
+    arithmeticexpression1=ArithmeticExpression '<' arithmeticexpression2=ArithmeticExpression
 ;
 
 Greater returns Greater:
-    'Greater' '{' 'expression' '{' expression+=Expression  ("," expression+=Expression  )* '}' 'arithmeticexpression' '{' arithmeticexpression+=ArithmeticExpression  ("," arithmeticexpression+=ArithmeticExpression  )* '}' '}'  
+    arithmeticexpression1=ArithmeticExpression '>' arithmeticexpression2=ArithmeticExpression
 ;
 
-Equal returns Equal:
-    'Equal' '{' 'expression' '{' expression+=Expression  ("," expression+=Expression  )* '}' 'arithmeticexpression' '{' arithmeticexpression+=ArithmeticExpression  ("," arithmeticexpression+=ArithmeticExpression  )* '}' '}'  
+EqualInt returns EqualInt:
+    arithmeticexpression1=ArithmeticExpression '==' arithmeticexpression2=ArithmeticExpression  
 ;
 
-NotEqual returns NotEqual:
-    'NotEqual' '{' 'expression' '{' expression+=Expression  ("," expression+=Expression  )* '}' 'arithmeticexpression' '{' arithmeticexpression+=ArithmeticExpression  ("," arithmeticexpression+=ArithmeticExpression  )* '}' '}'  
+NotEqualInt returns NotEqualInt:
+    arithmeticexpression1=ArithmeticExpression '!=' arithmeticexpression2=ArithmeticExpression
+;
+EqualBool returns EqualBool:
+    booleanexpression1=BoolExpression '==' booleanexpression2=BoolExpression
+;
+
+NotEqualBool returns NotEqualBool:
+    booleanexpression1=BoolExpression '!=' booleanexpression2=BoolExpression
 ;
 
 And returns And:
-    'And' '{' 'expression' '{' expression+=Expression  ("," expression+=Expression  )* '}' '}'  
+    booleanexpression1=BoolExpression 'and' booleanexpression2=BoolExpression
 ;
 
 Or returns Or:
-    'Or' '{' 'expression' '{' expression+=Expression  ("," expression+=Expression  )* '}' '}'  
+    booleanexpression1=BoolExpression 'or' booleanexpression2=BoolExpression  
 ;
 
 ConstInt returns ConstInt:
-    {ConstInt} 'ConstInt' '{' ('integerValue' integerValue=Int0  )? '}'  
+    integerValue=INT
 ;
 
 Addition returns Addition:
-    'Addition' '{' 'arithmeticexpression' '{' arithmeticexpression+=ArithmeticExpression  ("," arithmeticexpression+=ArithmeticExpression  )* '}' '}'  
+    arithmeticexpression1=ArithmeticExpression '+' arithmeticexpression2=ArithmeticExpression  
 ;
 
 Substraction returns Substraction:
-    'Substraction' '{' 'arithmeticexpression' '{' arithmeticexpression+=ArithmeticExpression  ("," arithmeticexpression+=ArithmeticExpression  )* '}' '}'  
+    arithmeticexpression1=ArithmeticExpression '-' arithmeticexpression2=ArithmeticExpression
 ;
 
 Multiplication returns Multiplication:
-    'Multiplication' '{' 'arithmeticexpression' '{' arithmeticexpression+=ArithmeticExpression  ("," arithmeticexpression+=ArithmeticExpression  )* '}' '}'  
+    arithmeticexpression1=ArithmeticExpression '*' arithmeticexpression2=ArithmeticExpression 
 ;
 
 Division returns Division:
-    'Division' '{' 'arithmeticexpression' '{' arithmeticexpression+=ArithmeticExpression  ("," arithmeticexpression+=ArithmeticExpression  )* '}' '}'  
+    arithmeticexpression1=ArithmeticExpression '/' arithmeticexpression2=ArithmeticExpression  
 ;
 
 Var returns Var:
-    {Var} 'Var' '{' ('name' name=Str0  )? '}'  
+    name=STRING 
 ;
 
 ConstBool returns ConstBool:
-    {ConstBool} 'ConstBool' '{' ('BoolValue' BoolValue=Bool0  )? '}'  
-;
-
-Int0 returns Int:
-    'Int' 
-;
-
-Bool0 returns Boolean:
-    'Boolean' 
+    BoolValue=BOOL  
 ;
 
 mm returns mm:
-    {mm} 'mm'  
+    {mm} 'in' 'mm'
 ;
 
 cm returns cm:
-    {cm} 'cm'  
+    {cm} 'in' 'cm' 
 ;
 
 Nbr returns Nbr:

@@ -22,8 +22,8 @@ interface Parameter {
 	^type: Type
 }
 
-interface Condition extends BoolExpression {
-	expression: Expression[]
+interface Condition {
+
 }
 
 interface BoolExpression extends Expression {
@@ -91,6 +91,7 @@ interface declaVar extends Statement {
 
 interface FunCall extends Statement, ArithmeticExpression, BoolExpression {
 	name?: Str
+	expression: Expression[]
 }
 
 interface Return extends Statement {
@@ -113,20 +114,31 @@ interface Lower extends ArithmeticCondition {
 }
 
 interface ArithmeticCondition extends Condition {
-	arithmeticexpression: ArithmeticExpression[]
+	arithmeticexpression1: ArithmeticExpression
+	arithmeticexpression2: ArithmeticExpression
 }
 
 interface Greater extends ArithmeticCondition {
 }
 
-interface Equal extends ArithmeticCondition, BoolCondition {
+interface EqualInt extends ArithmeticCondition {
+}
+
+interface EqualBool extends BoolCondition {
+}
+
+interface NotEqualBool extends BoolCondition {
+}
+
+interface NotEqualInt extends ArithmeticCondition {
 }
 
 interface BoolCondition extends Condition, BoolExpression {
+	booleanexpression1: BoolExpression
+	booleanexpression2: BoolExpression
 }
 
-interface NotEqual extends ArithmeticCondition, BoolCondition {
-}
+
 
 interface And extends BoolCondition {
 }
@@ -142,7 +154,8 @@ interface Addition extends ArithmeticOperation {
 }
 
 interface ArithmeticOperation extends ArithmeticExpression {
-	arithmeticexpression: ArithmeticExpression[]
+	arithmeticexpression1: ArithmeticExpression
+	arithmeticexpression2: ArithmeticExpression
 }
 
 interface Substraction extends ArithmeticOperation {
