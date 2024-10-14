@@ -118,7 +118,7 @@ LeftSide returns LeftSide:
 ;
 
 Comparison returns Comparison:
-    arithmeticexpression+=ArithmeticExpression (('<' | '>' | '==' | '!=') arithmeticexpression+=ArithmeticExpression)*
+    arithmeticexpression+=ArithmeticExpression ('<' | '>' | '==' | '!=') arithmeticexpression+=ArithmeticExpression
 ;
 // Lower returns Lower:
 //     arithmeticexpression+=ArithmeticExpression ('<' arithmeticexpression+=ArithmeticExpression)*
@@ -144,11 +144,11 @@ NotEqualBool returns NotEqualBool:
 ;
 
 And returns And:
-    (singlevaluebool+=SingleValueBool | comparison+=Comparison) (('and' (singlevaluebool+=SingleValueBool | comparison+=Comparison))*)?
+    '('? (singlevaluebool+=SingleValueBool | comparison+=Comparison )')'? ('and' '('?(singlevaluebool+=SingleValueBool | comparison+=Comparison)')'?)*
 ;
 
 Or returns Or:
-    (and+=And | comparison+=Comparison) (('or' (and+=And | comparison+=Comparison) )*)?
+    (and+=And | comparison+=Comparison) ('or' (and+=And | comparison+=Comparison))*
 ;
 
 ConstInt returns ConstInt:
