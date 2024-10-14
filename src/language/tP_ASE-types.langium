@@ -39,6 +39,16 @@ interface ArithmeticExpression extends Expression {
 }
 
 interface If extends ControlStructure {
+	elseif: Elseif[]
+	else?: Else
+}
+
+interface Elseif {
+	condition: Condition
+	statement: Statement[]
+}
+interface Else {
+	statement: Statement[]
 }
 
 interface ControlStructure extends Statement {

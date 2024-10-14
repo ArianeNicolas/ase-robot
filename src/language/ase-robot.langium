@@ -62,7 +62,15 @@ Parameter returns Parameter:
 ;
 
 If returns If:
-    'if' condition=Condition '{' (statement+=Statement)* '}'  
+    'if' condition=Condition '{' (statement+=Statement)* '}'  elseif+=Elseif* else=Else?
+;
+
+Elseif returns Elseif:
+    'else' 'if' condition=Condition '{' (statement+=Statement)* '}'  
+;
+
+Else returns Else:
+    'else' '{' (statement+=Statement)* '}'  
 ;
 
 Loop returns Loop:
