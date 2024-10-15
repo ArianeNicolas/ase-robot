@@ -8,7 +8,7 @@ entry Program returns Program:
 ;
 
 Statement returns Statement:
-    If | Loop | Front | Back | RightSide | Rotation | setSpeed | getDistance | getTimestamp | declaVar | FunCall | Return | AssignVar | LeftSide 
+    If | Loop | Front | Back | RightSide | Rotation | setSpeed | declaVar | FunCall | Return | AssignVar | LeftSide 
 ;
 
 Type returns Type:
@@ -36,7 +36,7 @@ SingleValueBool returns SingleValueBool:
 ;
 
 ArithmeticExpression returns ArithmeticExpression:
-    Addition | SingleValue | Multiplication
+    Addition | SingleValue | Multiplication | Substraction | Division
 ; 
 
 BoolExpression returns BoolExpression:
@@ -47,13 +47,17 @@ ArithmeticCondition returns ArithmeticCondition:
     Comparison
 ;
 
+Comparison returns Comparison:
+    Greater | Lower | EqualInt | NotEqualInt
+;
+
 BoolCondition returns BoolCondition:
     EqualBool | NotEqualBool | Or 
 ;
 
 
 Func returns Func:
-    'let' ^type=Type name=ID '(' (parameter+=Parameter  ("," parameter+=Parameter  )*)? ')' '{' (statement+=Statement  (statement+=Statement  )*) ? '}'  
+    'let' ^type=Type name=ID '(' (parameter+=Parameter  ("," parameter+=Parameter  )*)? ')' '{' (statement+=Statement  )* '}'  
 ;
 
 
@@ -78,23 +82,23 @@ Loop returns Loop:
 ;
 
 Front returns Front:
-    'Forward' expression=Expression unit1=Unit 
+    'Forward' expression=ArithmeticExpression unit1=Unit 
 ;
 
 Back returns Back:
-    'Backward' expression=Expression unit1=Unit 
+    'Backward' expression=ArithmeticExpression unit1=Unit 
 ;
 
 RightSide returns RightSide:
-    'Right' expression=Expression unit1=Unit
+    'Right' expression=ArithmeticExpression unit1=Unit
 ;
 
 Rotation returns Rotation:
-    'Clock' angle=INT
+    'Clock' angle=ArithmeticExpression
 ;
 
 setSpeed returns setSpeed:
-    'setSpeed(' speed=INT unit=Unit ')'  
+    'setSpeed(' speed=ArithmeticExpression unit=Unit ')'  
 ;
 
 getDistance returns getDistance:
@@ -110,7 +114,7 @@ declaVar returns declaVar:
 ;
 
 FunCall returns FunCall:
-    name=ID '(' (expression+=Expression  ("," expression+=Expression)*)? ')'  
+    name=ID '(' (expression+=Expression  ("," expression+=Expression)*)? ')' | getDistance | getTimestamp
 ;
 
 Return returns Return:
@@ -122,27 +126,24 @@ AssignVar returns AssignVar:
 ;
 
 LeftSide returns LeftSide:
-    'LeftSide' expression=Expression unit1=Unit  
+    'LeftSide' expression=ArithmeticExpression unit1=Unit  
 ;
 
-Comparison returns Comparison:
-    arithmeticexpression+=ArithmeticExpression ('<' | '>' | '==' | '!=') arithmeticexpression+=ArithmeticExpression
+Lower returns Lower:
+    arithmeticexpression+=ArithmeticExpression ('<' arithmeticexpression+=ArithmeticExpression)
 ;
-// Lower returns Lower:
-//     arithmeticexpression+=ArithmeticExpression ('<' arithmeticexpression+=ArithmeticExpression)*
-// ;
 
-// Greater returns Greater:
-//     arithmeticexpression+=ArithmeticExpression ('>' arithmeticexpression+=ArithmeticExpression)*
-// ;
+Greater returns Greater:
+    arithmeticexpression+=ArithmeticExpression ('>' arithmeticexpression+=ArithmeticExpression)
+;
 
-// EqualInt returns EqualInt:
-//     arithmeticexpression+=ArithmeticExpression ('==' arithmeticexpression+=ArithmeticExpression)* 
-// ;
+EqualInt returns EqualInt:
+    arithmeticexpression+=ArithmeticExpression ('==' arithmeticexpression+=ArithmeticExpression)
+;
 
-// NotEqualInt returns NotEqualInt:
-//     arithmeticexpression+=ArithmeticExpression ('!=' arithmeticexpression+=ArithmeticExpression)*
-// ;
+NotEqualInt returns NotEqualInt:
+    arithmeticexpression+=ArithmeticExpression ('!=' arithmeticexpression+=ArithmeticExpression)
+;
 EqualBool returns EqualBool:
     singlevaluebool+=SingleValueBool '==' singlevaluebool+=SingleValueBool
 ;
@@ -164,11 +165,18 @@ ConstInt returns ConstInt:
 ;
 
 Addition returns Addition:
-    multiplication+=Multiplication ('('? ('+'|'-') (multiplication+=Multiplication)*')'?)?
+     (multiplication+=Multiplication | division+=Division) ( '+' (multiplication+=Multiplication | division+=Division)*)?
+;
+Substraction returns Substraction:
+     (multiplication+=Multiplication | division+=Division) ( '-' (multiplication+=Multiplication | division+=Division)*)?
 ;
 
 Multiplication returns Multiplication:
-    singlevalue+=SingleValue ('('? ('*'|'/') (singlevalue+=SingleValue)*')'?)?
+    (singlevalue+=SingleValue | '('(addition+=Addition | substraction+=Substraction)')' ) ( '*' (singlevalue+=SingleValue | '('(addition+=Addition | substraction+=Substraction)')')*)?
+;
+
+Division returns Division:
+    (singlevalue+=SingleValue | '('(addition+=Addition | substraction+=Substraction)')' ) ( '/' (singlevalue+=SingleValue | '('(addition+=Addition | substraction+=Substraction)')')*)?
 ;
 
 Var returns Var:

@@ -63,7 +63,7 @@ interface Front extends Movement {
 }
 
 interface Movement extends RobotLogic {
-	expression: Expression
+	expression: ArithmeticExpression
 	unit1: Unit
 }
 
@@ -77,12 +77,12 @@ interface RightSide extends Movement {
 }
 
 interface Rotation extends RobotLogic {
-	angle?: Int
+	angle?: ArithmeticExpression
 }
 
 interface setSpeed extends RobotFunc {
 	unit: Unit
-	speed: Int
+	speed: ArithmeticExpression
 }
 
 interface RobotFunc extends RobotLogic, Expression {
@@ -131,16 +131,16 @@ interface ArithmeticCondition extends Condition {
 interface Comparison extends ArithmeticCondition {
 
 }
-// interface Lower extends ArithmeticCondition {
-// }
+interface Lower extends Comparison {
+}
 
-// interface Greater extends ArithmeticCondition {
-// }
+interface Greater extends Comparison {
+}
 
-// interface EqualInt extends ArithmeticCondition {
-// }
-// interface NotEqualInt extends ArithmeticCondition {
-// }
+interface EqualInt extends Comparison {
+}
+interface NotEqualInt extends Comparison {
+}
 
 interface EqualBool extends BoolCondition {
 	singlevaluebool: SingleValueBool[]
@@ -168,25 +168,36 @@ interface Or extends BoolCondition {
 }
 
 interface ConstInt extends SingleValue {
-	integerValue?: Int
+	integerValue?: number
 }
 
 interface Addition extends ArithmeticOperation {
-	multiplication: Multiplication[]
+	multiplication?: Multiplication[]
+	division?: Division[]
 }
 
+interface Substraction extends ArithmeticOperation {
+	multiplication?: Multiplication[]
+	division?: Division[]
+}
 interface ArithmeticOperation extends ArithmeticExpression {
 	
 }
 
-
 interface Multiplication extends ArithmeticOperation {
-	singlevalue: SingleValue[]
+	singlevalue?: SingleValue[]
+	addition?: Addition[]
+	substraction?: Substraction[]
 }
 
+interface Division extends ArithmeticOperation {
+	singlevalue?: SingleValue[]
+	addition?: Addition[]
+	substraction?: Substraction[]
+}
 
 interface ConstBool extends SingleValueBool {
-	BoolValue?: Boolean
+	BoolValue?: boolean
 }
 
 interface mm extends Unit {
