@@ -1,7 +1,7 @@
 import type { DefaultSharedModuleContext, LangiumServices, LangiumSharedServices, Module, PartialLangiumServices } from 'langium';
 import { createDefaultModule, createDefaultSharedModule, inject } from 'langium';
 import { AseRobotGeneratedModule, AseRobotGeneratedSharedModule } from './generated/module.js';
-import { AseRobotValidator } from './ase-robot-validator.js';
+import { AseRobotValidator, registerValidationChecks } from './ase-robot-validator.js';
 
 /**
  * Declaration of custom services - add your own service classes here.
@@ -58,6 +58,6 @@ export function createAseRobotServices(context: DefaultSharedModuleContext): {
         AseRobotModule
     );
     shared.ServiceRegistry.register(AseRobot);
-    //registerValidationChecks(AseRobot);
+    registerValidationChecks(AseRobot);
     return { shared, AseRobot };
 }

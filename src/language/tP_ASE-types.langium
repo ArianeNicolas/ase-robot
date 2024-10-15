@@ -6,7 +6,7 @@ interface Program {
 
 interface Func {
 	statement: Statement[]
-	name?: Str
+	name: Str
 	^type: Type
 	parameter: Parameter[]
 }
@@ -18,7 +18,7 @@ interface Type {
 }
 
 interface Parameter {
-	name?: Str
+	name: Str
 	^type: Type
 }
 
@@ -96,12 +96,12 @@ interface getTimestamp extends RobotFunc {
 
 interface declaVar extends Statement {
 	^type: Type
-	name?: Str
+	declaName: Str
 	expression: Expression
 }
 
 interface FunCall extends Statement, SingleValue, SingleValueBool {
-	name?: Str
+	callName: Str
 	expression: Expression[]
 }
 
@@ -114,12 +114,12 @@ interface Return extends Statement {
 }
 
 interface AssignVar extends Statement {
-	var: Var
+	var_to_assign: Var
 	expression: Expression
 }
 
 interface Var extends SingleValue, SingleValueBool {
-	name?: Str
+	name: Str
 }
 
 interface LeftSide extends Movement {

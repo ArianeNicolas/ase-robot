@@ -110,11 +110,11 @@ getTimestamp returns getTimestamp:
 ;
 
 declaVar returns declaVar:
-    'var' ^type=Type name=ID '=' expression=Expression  
+    'var' ^type=Type declaName=ID '=' expression=Expression  
 ;
 
 FunCall returns FunCall:
-    name=ID '(' (expression+=Expression  ("," expression+=Expression)*)? ')' | getDistance | getTimestamp
+    callName=ID '(' (expression+=Expression  ("," expression+=Expression)*)? ')' | getDistance | getTimestamp
 ;
 
 Return returns Return:
@@ -122,7 +122,7 @@ Return returns Return:
 ;
 
 AssignVar returns AssignVar:
-    var=Var '=' expression=Expression  
+    var_to_assign=Var '=' expression=Expression  
 ;
 
 LeftSide returns LeftSide:
