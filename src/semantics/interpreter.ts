@@ -1,8 +1,8 @@
-import {AddExpression, And, ArithmeticExpression, ArithmeticOperation, AseRobotVisitor, AssignVar, Back, Bool, BoolExpression, cm, Comparison, ConstBool, ConstInt, declaVar, Else, Elseif, EqualBool, EqualInt, Front, Func, FunCall, getDistance, getTimestamp, Greater, If, LeftSide, Loop, Lower, mm, MultExpression, Nbr, NotEqualBool, NotEqualInt, Or, Parameter, Program, Return, RightSide, RobotFunc, RobotLogic, Rotation, setSpeed, Type, Unit, Var, Void} from "../language/visitor.js"
+import {AddExpression, And, AseRobotVisitor, AssignVar, Back, Bool, BoolExpression, cm, Comparison, ConstBool, ConstInt, declaVar, Else, Elseif, EqualBool, EqualInt, Front, Func, FunCall, getDistance, getTimestamp, Greater, If, LeftSide, Loop, Lower, mm, MultExpression, Nbr, NotEqualBool, NotEqualInt, Or, Parameter, Program, Return, RightSide, RobotFunc, RobotLogic, Rotation, setSpeed, Type, Unit, Var, Void} from "../language/visitor.js"
 
 export class Interpreter implements AseRobotVisitor {
     
-    vars = new Map<string, any>();
+    vars: Map<string, any>[] = [];
 
     visitMultExpression(node: MultExpression):number {
         let returnValue = node.singlevalue[0].accept(this);
@@ -41,29 +41,17 @@ export class Interpreter implements AseRobotVisitor {
     visitParameter(node: Parameter) {
         throw new Error("Method not implemented.");
     }
-    visitType(node: Type) {
-        throw new Error("Method not implemented.");
-    }
-    visitUnit(node: Unit) {
-        throw new Error("Method not implemented.");
-    }
     visitFunCall(node: FunCall) {
         throw new Error("Method not implemented.");
     }
     visitAssignVar(node: AssignVar) {
-        this.vars.set(node.var_to_assign.name, node.expression.accept(this));
+        this.vars[this.vars.length-1].set(node.var_to_assign.name, node.expression.accept(this));
     }
     visitdeclaVar(node: declaVar) {
-        this.vars.set(node.declaName, node.expression.accept(this));
+        this.vars[this.vars.length-1].set(node.declaName, node.expression.accept(this));
     }
-    visitReturn(node: Return) {
-        throw new Error("Method not implemented.");
-    }
-    visitcm(node: cm) {
-        throw new Error("Method not implemented.");
-    }
-    visitmm(node: mm) {
-        throw new Error("Method not implemented.");
+    visitReturn(node: Return): any {
+        return node.expression.accept(this);
     }
     visitAnd(node: And): boolean {
         let returnValue = node.condition[0].accept(this);
@@ -123,7 +111,7 @@ export class Interpreter implements AseRobotVisitor {
         return node.BoolValue;
     }
     visitVar(node: Var): any {
-        return this.vars.get(node.name);
+        return this.vars[this.vars.length-1].get(node.name);
     }
     visitConstInt(node: ConstInt): number {
         return node.integerValue;

@@ -8,14 +8,10 @@ export interface AseRobotVisitor{
 	visitFunc(node : Func) : any;
 	visitProgram(node : Program) : any;
 	visitParameter(node : Parameter) : any;
-	visitType(node : Type) : any;
-	visitUnit(node : Unit) : any;
 	visitFunCall(node : FunCall) : any;
 	visitAssignVar(node : AssignVar) : any;
 	visitdeclaVar(node : declaVar) : any;
 	visitReturn(node : Return) : any;
-	visitcm(node : cm) : any;
-	visitmm(node : mm) : any;
 	visitAnd(node : And) : any;
     visitOr(node : Or) : any;
 	visitEqualBool(node : EqualBool) : any;
