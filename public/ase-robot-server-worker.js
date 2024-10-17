@@ -162,7 +162,7 @@ ${r}`),this.inline?`{${i}}`:i}};function jU(t,e,r){var n,i;if(t==="linkplain"||t
 `)?`
 `:`
 
-`}var Ld=class{constructor(e){this.indexManager=e.shared.workspace.IndexManager,this.commentProvider=e.documentation.CommentProvider}getDocumentation(e){let r=this.commentProvider.getComment(e);if(r&&Ww(r))return Kw(r).toMarkdown({renderLink:(i,o)=>this.documentationLinkRenderer(e,i,o)})}documentationLinkRenderer(e,r,n){var i;let o=(i=this.findNameInPrecomputedScopes(e,r))!==null&&i!==void 0?i:this.findNameInGlobalScope(e,r);if(o&&o.nameSegment){let s=o.nameSegment.range.start.line+1,a=o.nameSegment.range.start.character+1,l=o.documentUri.with({fragment:`L${s},${a}`});return`[${n}](${l.toString()})`}else return}findNameInPrecomputedScopes(e,r){let i=ne(e).precomputedScopes;if(!i)return;let o=e;do{let a=i.get(o).find(l=>l.name===r);if(a)return a;o=o.$container}while(o)}findNameInGlobalScope(e,r){return this.indexManager.allElements().find(i=>i.name===r)}};var Md=class{constructor(e){this.grammarConfig=()=>e.parser.GrammarConfig}getComment(e){var r;return Mw(e)?e.$comment:(r=zT(e.$cstNode,this.grammarConfig().multilineCommentRules))===null||r===void 0?void 0:r.text}};function hl(t){return{documentation:{CommentProvider:e=>new Md(e),DocumentationProvider:e=>new Ld(e)},parser:{GrammarConfig:e=>fR(e),LangiumParser:e=>Dw(e),CompletionParser:e=>Pw(e),ValueConverter:()=>new bd,TokenBuilder:()=>new Rd,Lexer:e=>new Pd(e),ParserErrorMessageProvider:()=>new jl},lsp:{CompletionProvider:e=>new As(e),DocumentSymbolProvider:e=>new Ou(e),HoverProvider:e=>new Fu(e),FoldingRangeProvider:e=>new ws(e),ReferencesProvider:e=>new Bu(e),DefinitionProvider:e=>new Es(e),DocumentHighlightProvider:e=>new Du(e),RenameProvider:e=>new Ku(e)},workspace:{AstNodeLocator:()=>new Ed,AstNodeDescriptionProvider:e=>new Cd(e),ReferenceDescriptionProvider:e=>new kd(e)},references:{Linker:e=>new Ad(e),NameProvider:()=>new cs,ScopeProvider:e=>new Rs(e),ScopeComputation:e=>new xs(e),References:e=>new Cs(e)},serializer:{JsonSerializer:e=>new Sd(e)},validation:{DocumentValidator:e=>new vu(e),ValidationRegistry:e=>new uu(e)},shared:()=>t.shared}}function gl(t){return{ServiceRegistry:()=>new wd,lsp:{Connection:()=>t.connection,LanguageServer:e=>new Gu(e),WorkspaceSymbolProvider:e=>new Wu(e),NodeKindProvider:()=>new ju,FuzzyMatcher:()=>new Mu},workspace:{LangiumDocuments:e=>new Uu(e),LangiumDocumentFactory:e=>new qu(e),DocumentBuilder:e=>new Nd(e),TextDocuments:()=>new Jw.TextDocuments(Jo),IndexManager:e=>new _d(e),WorkspaceManager:e=>new Id(e),FileSystemProvider:e=>t.fileSystemProvider(e),MutexLock:()=>new cu,ConfigurationProvider:e=>new $d(e)}}}var xa=de(Zw(),1);var eC="Condition";var tC="Expression";var rC="Statement";var BU="Type";var KU="Unit";var nC="ArithmeticCondition";var iC="BoolCondition";var oC="ArithmeticExpression";var sC="BoolExpression";var aC="RobotFunc";var WU="AssignVar";var lC="ControlStructure";var zU="declaVar";var VU="FunCall";var XU="Return";var Ng="RobotLogic";var YU="Bool";var JU="Nbr";var QU="Void";var ZU="cm";var eG="mm";var cC="Comparison";var tG="And";var rG="EqualBool";var nG="NotEqualBool";var iG="Or";var Fd="SingleValueBool";var oG="AddExpression";var sG="ArithmeticOperation";var aG="MultExpression";var qd="SingleValue";var lG="getDistance";var cG="getTimestamp";var uG="setSpeed";var fG="If";var dG="Loop";var uC="Movement";var pG="Rotation";var mG="EqualInt";var hG="Greater";var gG="Lower";var yG="NotEqualInt";var TG="ConstBool";var vG="Var";var xG="ConstInt";var RG="Back";var bG="Front";var AG="LeftSide";var SG="RightSide";var Wl=class extends uo{getAllTypes(){return["AddExpression","And","ArithmeticCondition","ArithmeticExpression","ArithmeticOperation","AssignVar","Back","Bool","BoolCondition","BoolExpression","Comparison","Condition","ConstBool","ConstInt","ControlStructure","Else","Elseif","EqualBool","EqualInt","Expression","Front","FunCall","Func","Greater","If","LeftSide","Loop","Lower","Movement","MultExpression","Nbr","NotEqualBool","NotEqualInt","Or","Parameter","Program","Return","RightSide","RobotFunc","RobotLogic","Rotation","SingleValue","SingleValueBool","Statement","Type","Unit","Var","Void","cm","declaVar","getDistance","getTimestamp","mm","setSpeed"]}computeIsSubtype(e,r){switch(e){case oG:case sG:case aG:case qd:return this.isSubtype(oC,r);case tG:case rG:case nG:case iG:case Fd:return this.isSubtype(iC,r);case nC:return this.isSubtype(eC,r);case oC:case sC:return this.isSubtype(tC,r);case WU:case lC:case zU:case XU:case Ng:return this.isSubtype(rC,r);case RG:case bG:case AG:case SG:return this.isSubtype(uC,r);case YU:case JU:case QU:return this.isSubtype(BU,r);case iC:return this.isSubtype(sC,r)||this.isSubtype(eC,r);case ZU:case eG:return this.isSubtype(KU,r);case cC:return this.isSubtype(nC,r);case TG:return this.isSubtype(Fd,r);case xG:return this.isSubtype(qd,r);case mG:case hG:case gG:case yG:return this.isSubtype(cC,r);case VU:return this.isSubtype(qd,r)||this.isSubtype(Fd,r)||this.isSubtype(rC,r);case lG:case cG:case uG:return this.isSubtype(aC,r);case fG:case dG:return this.isSubtype(lC,r);case uC:case pG:return this.isSubtype(Ng,r);case aC:return this.isSubtype(tC,r)||this.isSubtype(Ng,r);case vG:return this.isSubtype(qd,r)||this.isSubtype(Fd,r);default:return!1}}getReferenceType(e){let r=`${e.container.$type}:${e.property}`;switch(r){default:throw new Error(`${r} is not a valid reference id.`)}}getTypeMetaData(e){switch(e){case"Else":return{name:"Else",mandatory:[{name:"statement",type:"array"}]};case"Elseif":return{name:"Elseif",mandatory:[{name:"statement",type:"array"}]};case"Func":return{name:"Func",mandatory:[{name:"parameter",type:"array"},{name:"statement",type:"array"}]};case"Program":return{name:"Program",mandatory:[{name:"Func",type:"array"}]};case"ArithmeticCondition":return{name:"ArithmeticCondition",mandatory:[{name:"arithmeticexpression",type:"array"}]};case"ControlStructure":return{name:"ControlStructure",mandatory:[{name:"statement",type:"array"}]};case"FunCall":return{name:"FunCall",mandatory:[{name:"parameters",type:"array"}]};case"And":return{name:"And",mandatory:[{name:"comparison",type:"array"},{name:"singlevaluebool",type:"array"}]};case"EqualBool":return{name:"EqualBool",mandatory:[{name:"singlevaluebool",type:"array"}]};case"NotEqualBool":return{name:"NotEqualBool",mandatory:[{name:"singlevaluebool",type:"array"}]};case"Or":return{name:"Or",mandatory:[{name:"and",type:"array"},{name:"comparison",type:"array"}]};case"AddExpression":return{name:"AddExpression",mandatory:[{name:"multexpression",type:"array"}]};case"MultExpression":return{name:"MultExpression",mandatory:[{name:"singlevalue",type:"array"}]};case"If":return{name:"If",mandatory:[{name:"elseif",type:"array"}]};case"ConstBool":return{name:"ConstBool",mandatory:[{name:"BoolValue",type:"boolean"}]};default:return{name:e,mandatory:[]}}}},Mle=new Wl;var Ud,fC=()=>Ud??(Ud=lu(`{
+`}var Ld=class{constructor(e){this.indexManager=e.shared.workspace.IndexManager,this.commentProvider=e.documentation.CommentProvider}getDocumentation(e){let r=this.commentProvider.getComment(e);if(r&&Ww(r))return Kw(r).toMarkdown({renderLink:(i,o)=>this.documentationLinkRenderer(e,i,o)})}documentationLinkRenderer(e,r,n){var i;let o=(i=this.findNameInPrecomputedScopes(e,r))!==null&&i!==void 0?i:this.findNameInGlobalScope(e,r);if(o&&o.nameSegment){let s=o.nameSegment.range.start.line+1,a=o.nameSegment.range.start.character+1,l=o.documentUri.with({fragment:`L${s},${a}`});return`[${n}](${l.toString()})`}else return}findNameInPrecomputedScopes(e,r){let i=ne(e).precomputedScopes;if(!i)return;let o=e;do{let a=i.get(o).find(l=>l.name===r);if(a)return a;o=o.$container}while(o)}findNameInGlobalScope(e,r){return this.indexManager.allElements().find(i=>i.name===r)}};var Md=class{constructor(e){this.grammarConfig=()=>e.parser.GrammarConfig}getComment(e){var r;return Mw(e)?e.$comment:(r=zT(e.$cstNode,this.grammarConfig().multilineCommentRules))===null||r===void 0?void 0:r.text}};function hl(t){return{documentation:{CommentProvider:e=>new Md(e),DocumentationProvider:e=>new Ld(e)},parser:{GrammarConfig:e=>fR(e),LangiumParser:e=>Dw(e),CompletionParser:e=>Pw(e),ValueConverter:()=>new bd,TokenBuilder:()=>new Rd,Lexer:e=>new Pd(e),ParserErrorMessageProvider:()=>new jl},lsp:{CompletionProvider:e=>new As(e),DocumentSymbolProvider:e=>new Ou(e),HoverProvider:e=>new Fu(e),FoldingRangeProvider:e=>new ws(e),ReferencesProvider:e=>new Bu(e),DefinitionProvider:e=>new Es(e),DocumentHighlightProvider:e=>new Du(e),RenameProvider:e=>new Ku(e)},workspace:{AstNodeLocator:()=>new Ed,AstNodeDescriptionProvider:e=>new Cd(e),ReferenceDescriptionProvider:e=>new kd(e)},references:{Linker:e=>new Ad(e),NameProvider:()=>new cs,ScopeProvider:e=>new Rs(e),ScopeComputation:e=>new xs(e),References:e=>new Cs(e)},serializer:{JsonSerializer:e=>new Sd(e)},validation:{DocumentValidator:e=>new vu(e),ValidationRegistry:e=>new uu(e)},shared:()=>t.shared}}function gl(t){return{ServiceRegistry:()=>new wd,lsp:{Connection:()=>t.connection,LanguageServer:e=>new Gu(e),WorkspaceSymbolProvider:e=>new Wu(e),NodeKindProvider:()=>new ju,FuzzyMatcher:()=>new Mu},workspace:{LangiumDocuments:e=>new Uu(e),LangiumDocumentFactory:e=>new qu(e),DocumentBuilder:e=>new Nd(e),TextDocuments:()=>new Jw.TextDocuments(Jo),IndexManager:e=>new _d(e),WorkspaceManager:e=>new Id(e),FileSystemProvider:e=>t.fileSystemProvider(e),MutexLock:()=>new cu,ConfigurationProvider:e=>new $d(e)}}}var xa=de(Zw(),1);var eC="Condition";var tC="Expression";var rC="Statement";var BU="Type";var KU="Unit";var nC="ArithmeticCondition";var iC="BoolCondition";var oC="ArithmeticExpression";var sC="BoolExpression";var aC="RobotFunc";var WU="AssignVar";var lC="ControlStructure";var zU="declaVar";var VU="FunCall";var XU="Return";var Ng="RobotLogic";var YU="Bool";var JU="Nbr";var QU="Void";var ZU="cm";var eG="mm";var cC="Comparison";var tG="And";var rG="EqualBool";var nG="NotEqualBool";var iG="Or";var Fd="SingleValueBool";var oG="AddExpression";var sG="ArithmeticOperation";var aG="MultExpression";var qd="SingleValue";var lG="getDistance";var cG="getTimestamp";var uG="setSpeed";var fG="If";var dG="Loop";var uC="Movement";var pG="Rotation";var mG="EqualInt";var hG="Greater";var gG="Lower";var yG="NotEqualInt";var TG="ConstBool";var vG="Var";var xG="ConstInt";var RG="Back";var bG="Front";var AG="LeftSide";var SG="RightSide";var Wl=class extends uo{getAllTypes(){return["AddExpression","And","ArithmeticCondition","ArithmeticExpression","ArithmeticOperation","AssignVar","Back","Bool","BoolCondition","BoolExpression","Comparison","Condition","ConstBool","ConstInt","ControlStructure","Else","Elseif","EqualBool","EqualInt","Expression","Front","FunCall","Func","Greater","If","LeftSide","Loop","Lower","Movement","MultExpression","Nbr","NotEqualBool","NotEqualInt","Or","Parameter","Program","Return","RightSide","RobotFunc","RobotLogic","Rotation","SingleValue","SingleValueBool","Statement","Type","Unit","Var","Void","cm","declaVar","getDistance","getTimestamp","mm","setSpeed"]}computeIsSubtype(e,r){switch(e){case oG:case sG:case aG:case qd:return this.isSubtype(oC,r);case tG:case rG:case nG:case iG:case Fd:return this.isSubtype(iC,r);case nC:return this.isSubtype(eC,r);case oC:case sC:return this.isSubtype(tC,r);case WU:case lC:case zU:case XU:case Ng:return this.isSubtype(rC,r);case RG:case bG:case AG:case SG:return this.isSubtype(uC,r);case YU:case JU:case QU:return this.isSubtype(BU,r);case iC:return this.isSubtype(sC,r)||this.isSubtype(eC,r);case ZU:case eG:return this.isSubtype(KU,r);case cC:return this.isSubtype(nC,r);case TG:return this.isSubtype(Fd,r);case xG:return this.isSubtype(qd,r);case mG:case hG:case gG:case yG:return this.isSubtype(cC,r);case VU:return this.isSubtype(qd,r)||this.isSubtype(Fd,r)||this.isSubtype(rC,r);case lG:case cG:case uG:return this.isSubtype(aC,r);case fG:case dG:return this.isSubtype(lC,r);case uC:case pG:return this.isSubtype(Ng,r);case aC:return this.isSubtype(tC,r)||this.isSubtype(Ng,r);case vG:return this.isSubtype(qd,r)||this.isSubtype(Fd,r);default:return!1}}getReferenceType(e){let r=`${e.container.$type}:${e.property}`;switch(r){default:throw new Error(`${r} is not a valid reference id.`)}}getTypeMetaData(e){switch(e){case"Else":return{name:"Else",mandatory:[{name:"statement",type:"array"}]};case"Elseif":return{name:"Elseif",mandatory:[{name:"statement",type:"array"}]};case"Func":return{name:"Func",mandatory:[{name:"parameter",type:"array"},{name:"statement",type:"array"}]};case"Program":return{name:"Program",mandatory:[{name:"Func",type:"array"}]};case"ArithmeticCondition":return{name:"ArithmeticCondition",mandatory:[{name:"arithmeticexpression",type:"array"}]};case"ControlStructure":return{name:"ControlStructure",mandatory:[{name:"statement",type:"array"}]};case"FunCall":return{name:"FunCall",mandatory:[{name:"parameters",type:"array"}]};case"And":return{name:"And",mandatory:[{name:"condition",type:"array"}]};case"EqualBool":return{name:"EqualBool",mandatory:[{name:"singlevaluebool",type:"array"}]};case"NotEqualBool":return{name:"NotEqualBool",mandatory:[{name:"singlevaluebool",type:"array"}]};case"Or":return{name:"Or",mandatory:[{name:"condition",type:"array"}]};case"AddExpression":return{name:"AddExpression",mandatory:[{name:"multexpression",type:"array"}]};case"MultExpression":return{name:"MultExpression",mandatory:[{name:"singlevalue",type:"array"}]};case"If":return{name:"If",mandatory:[{name:"elseif",type:"array"}]};case"ConstBool":return{name:"ConstBool",mandatory:[{name:"BoolValue",type:"boolean"}]};default:return{name:e,mandatory:[]}}}},Mle=new Wl;var Ud,fC=()=>Ud??(Ud=lu(`{
   "$type": "Grammar",
   "isDeclared": true,
   "name": "AseRobot",
@@ -574,11 +574,41 @@ ${r}`),this.inline?`{${i}}`:i}};function jU(t,e,r){var n,i;if(t==="linkplain"||t
         "$ref": "#/interfaces@10"
       },
       "definition": {
-        "$type": "Alternatives",
+        "$type": "Group",
         "elements": [
+          {
+            "$type": "Assignment",
+            "feature": "multexpression",
+            "operator": "+=",
+            "terminal": {
+              "$type": "RuleCall",
+              "rule": {
+                "$ref": "#/rules@14"
+              },
+              "arguments": []
+            }
+          },
           {
             "$type": "Group",
             "elements": [
+              {
+                "$type": "Assignment",
+                "feature": "op",
+                "operator": "=",
+                "terminal": {
+                  "$type": "Alternatives",
+                  "elements": [
+                    {
+                      "$type": "Keyword",
+                      "value": "+"
+                    },
+                    {
+                      "$type": "Keyword",
+                      "value": "-"
+                    }
+                  ]
+                }
+              },
               {
                 "$type": "Assignment",
                 "feature": "multexpression",
@@ -590,69 +620,9 @@ ${r}`),this.inline?`{${i}}`:i}};function jU(t,e,r){var n,i;if(t==="linkplain"||t
                   },
                   "arguments": []
                 }
-              },
-              {
-                "$type": "Group",
-                "elements": [
-                  {
-                    "$type": "Assignment",
-                    "feature": "op",
-                    "operator": "=",
-                    "terminal": {
-                      "$type": "Alternatives",
-                      "elements": [
-                        {
-                          "$type": "Keyword",
-                          "value": "+"
-                        },
-                        {
-                          "$type": "Keyword",
-                          "value": "-"
-                        }
-                      ]
-                    }
-                  },
-                  {
-                    "$type": "Assignment",
-                    "feature": "multexpression",
-                    "operator": "+=",
-                    "terminal": {
-                      "$type": "RuleCall",
-                      "rule": {
-                        "$ref": "#/rules@14"
-                      },
-                      "arguments": []
-                    }
-                  }
-                ],
-                "cardinality": "*"
               }
-            ]
-          },
-          {
-            "$type": "Group",
-            "elements": [
-              {
-                "$type": "Keyword",
-                "value": "("
-              },
-              {
-                "$type": "Assignment",
-                "feature": "addExpression",
-                "operator": "=",
-                "terminal": {
-                  "$type": "RuleCall",
-                  "rule": {
-                    "$ref": "#/rules@9"
-                  },
-                  "arguments": []
-                }
-              },
-              {
-                "$type": "Keyword",
-                "value": ")"
-              }
-            ]
+            ],
+            "cardinality": "*"
           }
         ]
       },
@@ -810,16 +780,46 @@ ${r}`),this.inline?`{${i}}`:i}};function jU(t,e,r){var n,i;if(t==="linkplain"||t
         "$type": "Group",
         "elements": [
           {
-            "$type": "Assignment",
-            "feature": "singlevalue",
-            "operator": "+=",
-            "terminal": {
-              "$type": "RuleCall",
-              "rule": {
-                "$ref": "#/rules@6"
+            "$type": "Alternatives",
+            "elements": [
+              {
+                "$type": "Assignment",
+                "feature": "singlevalue",
+                "operator": "+=",
+                "terminal": {
+                  "$type": "RuleCall",
+                  "rule": {
+                    "$ref": "#/rules@6"
+                  },
+                  "arguments": []
+                }
               },
-              "arguments": []
-            }
+              {
+                "$type": "Group",
+                "elements": [
+                  {
+                    "$type": "Keyword",
+                    "value": "("
+                  },
+                  {
+                    "$type": "Assignment",
+                    "feature": "singlevalue",
+                    "operator": "+=",
+                    "terminal": {
+                      "$type": "RuleCall",
+                      "rule": {
+                        "$ref": "#/rules@8"
+                      },
+                      "arguments": []
+                    }
+                  },
+                  {
+                    "$type": "Keyword",
+                    "value": ")"
+                  }
+                ]
+              }
+            ]
           },
           {
             "$type": "Group",
@@ -843,16 +843,46 @@ ${r}`),this.inline?`{${i}}`:i}};function jU(t,e,r){var n,i;if(t==="linkplain"||t
                 }
               },
               {
-                "$type": "Assignment",
-                "feature": "singlevalue",
-                "operator": "+=",
-                "terminal": {
-                  "$type": "RuleCall",
-                  "rule": {
-                    "$ref": "#/rules@6"
+                "$type": "Alternatives",
+                "elements": [
+                  {
+                    "$type": "Assignment",
+                    "feature": "singlevalue",
+                    "operator": "+=",
+                    "terminal": {
+                      "$type": "RuleCall",
+                      "rule": {
+                        "$ref": "#/rules@6"
+                      },
+                      "arguments": []
+                    }
                   },
-                  "arguments": []
-                }
+                  {
+                    "$type": "Group",
+                    "elements": [
+                      {
+                        "$type": "Keyword",
+                        "value": "("
+                      },
+                      {
+                        "$type": "Assignment",
+                        "feature": "singlevalue",
+                        "operator": "+=",
+                        "terminal": {
+                          "$type": "RuleCall",
+                          "rule": {
+                            "$ref": "#/rules@8"
+                          },
+                          "arguments": []
+                        }
+                      },
+                      {
+                        "$type": "Keyword",
+                        "value": ")"
+                      }
+                    ]
+                  }
+                ]
               }
             ],
             "cardinality": "*"
@@ -2134,7 +2164,7 @@ ${r}`),this.inline?`{${i}}`:i}};function jU(t,e,r){var n,i;if(t==="linkplain"||t
             "elements": [
               {
                 "$type": "Assignment",
-                "feature": "singlevaluebool",
+                "feature": "condition",
                 "operator": "+=",
                 "terminal": {
                   "$type": "RuleCall",
@@ -2149,25 +2179,23 @@ ${r}`),this.inline?`{${i}}`:i}};function jU(t,e,r){var n,i;if(t==="linkplain"||t
                 "elements": [
                   {
                     "$type": "Keyword",
-                    "value": "(",
-                    "cardinality": "?"
+                    "value": "("
                   },
                   {
                     "$type": "Assignment",
-                    "feature": "comparison",
+                    "feature": "condition",
                     "operator": "+=",
                     "terminal": {
                       "$type": "RuleCall",
                       "rule": {
-                        "$ref": "#/rules@12"
+                        "$ref": "#/rules@3"
                       },
                       "arguments": []
                     }
                   },
                   {
                     "$type": "Keyword",
-                    "value": ")",
-                    "cardinality": "?"
+                    "value": ")"
                   }
                 ]
               }
@@ -2185,7 +2213,7 @@ ${r}`),this.inline?`{${i}}`:i}};function jU(t,e,r){var n,i;if(t==="linkplain"||t
                 "elements": [
                   {
                     "$type": "Assignment",
-                    "feature": "singlevaluebool",
+                    "feature": "condition",
                     "operator": "+=",
                     "terminal": {
                       "$type": "RuleCall",
@@ -2200,25 +2228,23 @@ ${r}`),this.inline?`{${i}}`:i}};function jU(t,e,r){var n,i;if(t==="linkplain"||t
                     "elements": [
                       {
                         "$type": "Keyword",
-                        "value": "(",
-                        "cardinality": "?"
+                        "value": "("
                       },
                       {
                         "$type": "Assignment",
-                        "feature": "comparison",
+                        "feature": "condition",
                         "operator": "+=",
                         "terminal": {
                           "$type": "RuleCall",
                           "rule": {
-                            "$ref": "#/rules@12"
+                            "$ref": "#/rules@3"
                           },
                           "arguments": []
                         }
                       },
                       {
                         "$type": "Keyword",
-                        "value": ")",
-                        "cardinality": "?"
+                        "value": ")"
                       }
                     ]
                   }
@@ -2250,7 +2276,7 @@ ${r}`),this.inline?`{${i}}`:i}};function jU(t,e,r){var n,i;if(t==="linkplain"||t
             "elements": [
               {
                 "$type": "Assignment",
-                "feature": "and",
+                "feature": "condition",
                 "operator": "+=",
                 "terminal": {
                   "$type": "RuleCall",
@@ -2262,7 +2288,7 @@ ${r}`),this.inline?`{${i}}`:i}};function jU(t,e,r){var n,i;if(t==="linkplain"||t
               },
               {
                 "$type": "Assignment",
-                "feature": "comparison",
+                "feature": "condition",
                 "operator": "+=",
                 "terminal": {
                   "$type": "RuleCall",
@@ -2286,7 +2312,7 @@ ${r}`),this.inline?`{${i}}`:i}};function jU(t,e,r){var n,i;if(t==="linkplain"||t
                 "elements": [
                   {
                     "$type": "Assignment",
-                    "feature": "and",
+                    "feature": "condition",
                     "operator": "+=",
                     "terminal": {
                       "$type": "RuleCall",
@@ -2298,7 +2324,7 @@ ${r}`),this.inline?`{${i}}`:i}};function jU(t,e,r){var n,i;if(t==="linkplain"||t
                   },
                   {
                     "$type": "Assignment",
-                    "feature": "comparison",
+                    "feature": "condition",
                     "operator": "+=",
                     "terminal": {
                       "$type": "RuleCall",
@@ -3234,7 +3260,7 @@ ${r}`),this.inline?`{${i}}`:i}};function jU(t,e,r){var n,i;if(t==="linkplain"||t
             "elementType": {
               "$type": "SimpleType",
               "typeRef": {
-                "$ref": "#/interfaces@29"
+                "$ref": "#/interfaces@9"
               }
             }
           },
@@ -3892,31 +3918,17 @@ ${r}`),this.inline?`{${i}}`:i}};function jU(t,e,r){var n,i;if(t==="linkplain"||t
       "attributes": [
         {
           "$type": "TypeAttribute",
-          "name": "singlevaluebool",
-          "isOptional": true,
+          "name": "condition",
           "type": {
             "$type": "ArrayType",
             "elementType": {
               "$type": "SimpleType",
               "typeRef": {
-                "$ref": "#/interfaces@43"
+                "$ref": "#/interfaces@5"
               }
             }
-          }
-        },
-        {
-          "$type": "TypeAttribute",
-          "name": "comparison",
-          "isOptional": true,
-          "type": {
-            "$type": "ArrayType",
-            "elementType": {
-              "$type": "SimpleType",
-              "typeRef": {
-                "$ref": "#/interfaces@35"
-              }
-            }
-          }
+          },
+          "isOptional": false
         }
       ],
       "name": "And",
@@ -3931,31 +3943,17 @@ ${r}`),this.inline?`{${i}}`:i}};function jU(t,e,r){var n,i;if(t==="linkplain"||t
       "attributes": [
         {
           "$type": "TypeAttribute",
-          "name": "and",
-          "isOptional": true,
+          "name": "condition",
           "type": {
             "$type": "ArrayType",
             "elementType": {
               "$type": "SimpleType",
               "typeRef": {
-                "$ref": "#/interfaces@44"
+                "$ref": "#/interfaces@5"
               }
             }
-          }
-        },
-        {
-          "$type": "TypeAttribute",
-          "name": "comparison",
-          "isOptional": true,
-          "type": {
-            "$type": "ArrayType",
-            "elementType": {
-              "$type": "SimpleType",
-              "typeRef": {
-                "$ref": "#/interfaces@35"
-              }
-            }
-          }
+          },
+          "isOptional": false
         }
       ],
       "name": "Or",

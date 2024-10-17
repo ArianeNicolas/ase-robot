@@ -1,8 +1,31 @@
-import {And, ArithmeticExpression, ArithmeticOperation, AseRobotVisitor, AssignVar, Back, Bool, BoolExpression, cm, Comparison, ConstBool, ConstInt, declaVar, Else, Elseif, EqualBool, EqualInt, Front, Func, FunCall, getDistance, getTimestamp, Greater, If, LeftSide, Loop, Lower, mm, Nbr, NotEqualBool, NotEqualInt, Or, Parameter, Program, Return, RightSide, RobotFunc, RobotLogic, Rotation, setSpeed, Type, Unit, Var, Void} from "../language/visitor.js"
+import {AddExpression, And, ArithmeticExpression, ArithmeticOperation, AseRobotVisitor, AssignVar, Back, Bool, BoolExpression, cm, Comparison, ConstBool, ConstInt, declaVar, Else, Elseif, EqualBool, EqualInt, Front, Func, FunCall, getDistance, getTimestamp, Greater, If, LeftSide, Loop, Lower, mm, MultExpression, Nbr, NotEqualBool, NotEqualInt, Or, Parameter, Program, Return, RightSide, RobotFunc, RobotLogic, Rotation, setSpeed, Type, Unit, Var, Void} from "../language/visitor.js"
 
 export class Interpreter implements AseRobotVisitor {
-
+    
     vars = new Map<string, any>();
+
+    visitMultExpression(node: MultExpression):number {
+        let returnValue = node.singlevalue[0].accept(this);
+        for(let i = 1; i < node.singlevalue.length; i++){
+            if(node.op[i] === '*'){
+                returnValue = returnValue * node.singlevalue[i].accept(this);
+            }else if(node.op === '/'){
+                returnValue = returnValue / node.singlevalue[i].accept(this);
+            }
+        }
+        return returnValue;
+    }
+    visitAddExpression(node: AddExpression):number {
+        let returnValue = node.multexpression[0].accept(this);
+        for(let i = 1; i < node.multexpression.length; i++){
+            if(node.op[i] === '+'){
+                returnValue = returnValue + node.multexpression[i].accept(this);
+            }else if(node.op === '-'){
+                returnValue = returnValue - node.multexpression[i].accept(this);
+            }
+        }
+        return returnValue;
+    }
 
     visitElse(node: Else) {
         node.statement.forEach((statement) => statement.accept(this));
@@ -27,34 +50,13 @@ export class Interpreter implements AseRobotVisitor {
     visitFunCall(node: FunCall) {
         throw new Error("Method not implemented.");
     }
-    visitArithmeticExpression(node: ArithmeticExpression) {
-        throw new Error("Method not implemented.");
-    }
-    visitBoolExpression(node: BoolExpression) {
-        throw new Error("Method not implemented.");
-    }
-    visitRobotFunc(node: RobotFunc) {
-        throw new Error("Method not implemented.");
-    }
     visitAssignVar(node: AssignVar) {
-        throw new Error("Method not implemented.");
+        this.vars.set(node.var_to_assign.name, node.expression.accept(this));
     }
     visitdeclaVar(node: declaVar) {
-        throw new Error("Method not implemented.");
+        this.vars.set(node.declaName, node.expression.accept(this));
     }
     visitReturn(node: Return) {
-        throw new Error("Method not implemented.");
-    }
-    visitRobotLogic(node: RobotLogic) {
-        throw new Error("Method not implemented.");
-    }
-    visitBool(node: Bool) {
-        throw new Error("Method not implemented.");
-    }
-    visitNbr(node: Nbr) {
-        throw new Error("Method not implemented.");
-    }
-    visitVoid(node: Void) {
         throw new Error("Method not implemented.");
     }
     visitcm(node: cm) {
@@ -63,23 +65,25 @@ export class Interpreter implements AseRobotVisitor {
     visitmm(node: mm) {
         throw new Error("Method not implemented.");
     }
-    visitComparison(node: Comparison) {
-        throw new Error("Method not implemented.");
+    visitAnd(node: And): boolean {
+        let returnValue = node.condition[0].accept(this);
+        for(let i = 1; i < node.condition.length; i++){
+            returnValue = returnValue && node.condition[i].accept(this);
+        }
+        return returnValue;
     }
-    visitAnd(node: And) {
-        throw new Error("Method not implemented.");
-    }
-    AseRobotVisitor(node: Or) {
-        throw new Error("Method not implemented.");
+    visitOr(node: Or): boolean {
+        let returnValue = node.condition[0].accept(this);
+        for(let i = 1; i < node.condition.length; i++){
+            returnValue = returnValue || node.condition[i].accept(this);
+        }
+        return returnValue;
     }
     visitEqualBool(node: EqualBool): boolean {
         return node.singlevaluebool[0].accept(this) === node.singlevaluebool[1].accept(this);
     }
     visitNotEqualBool(node: NotEqualBool): boolean {
         return node.singlevaluebool[0].accept(this) !== node.singlevaluebool[1].accept(this);
-    }
-    visitArithmeticOperation(node: ArithmeticOperation) {
-        throw new Error("Method not implemented.");
     }
     visitgetDistance(node: getDistance) {
         throw new Error("Method not implemented.");

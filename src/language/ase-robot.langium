@@ -160,11 +160,11 @@ NotEqualBool returns NotEqualBool:
 ;
 
 And returns And:
-     (singlevaluebool+=SingleValueBool | '('?comparison+=Comparison ')'?) ('and'(singlevaluebool+=SingleValueBool | '('? comparison+=Comparison ')'?))*
+     (condition+=SingleValueBool | '('condition+=Condition ')') ('and'(condition+=SingleValueBool | '(' condition+=Condition ')'))*
 ;
 
 Or returns Or:
-    (and+=And | comparison+=Comparison) ('or' (and+=And | comparison+=Comparison))*
+    (condition+=And | condition+=Comparison) ('or' (condition+=And | condition+=Comparison))*
 ;
 
 ConstInt returns ConstInt:

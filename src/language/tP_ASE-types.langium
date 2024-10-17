@@ -39,7 +39,6 @@ interface ArithmeticExpression extends Expression {
 }
 
 interface AddExpression extends ArithmeticExpression {
-	addExpression?: AddExpression
 	multexpression: MultExpression[]
 	op: string
 }
@@ -168,14 +167,12 @@ interface BoolCondition extends Condition, BoolExpression {
 interface SingleValueBool extends BoolCondition{}
 
 interface And extends BoolCondition{
-	singlevaluebool?: SingleValueBool[]
-	comparison?: Comparison[]
+	condition: Condition[]
 }
 
 
 interface Or extends BoolCondition {
-	and?: And[]
-	comparison?: Comparison[]
+	condition: Condition[]
 }
 
 interface ConstInt extends SingleValue {

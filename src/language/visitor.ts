@@ -1,7 +1,6 @@
 
 import * as ASTInterfaces from './generated/ast.js';
 import { AstNode, CstNode, LangiumDocument } from 'langium';
-import { AddExpression, MultExpression } from './generated/ast.js';
 
 export interface AseRobotVisitor{
 	visitElse(node : Else) : any;
@@ -12,24 +11,15 @@ export interface AseRobotVisitor{
 	visitType(node : Type) : any;
 	visitUnit(node : Unit) : any;
 	visitFunCall(node : FunCall) : any;
-	visitArithmeticExpression(node : ArithmeticExpression) : any;
-	visitBoolExpression(node : BoolExpression) : any;
-	visitRobotFunc(node : RobotFunc) : any;
 	visitAssignVar(node : AssignVar) : any;
 	visitdeclaVar(node : declaVar) : any;
 	visitReturn(node : Return) : any;
-	visitRobotLogic(node : RobotLogic) : any;
-	visitBool(node : Bool) : any;
-	visitNbr(node : Nbr) : any;
-	visitVoid(node : Void) : any;
 	visitcm(node : cm) : any;
 	visitmm(node : mm) : any;
-	visitComparison(node : Comparison) : any;
 	visitAnd(node : And) : any;
-	AseRobotVisitor(node : Or) : any;
+    visitOr(node : Or) : any;
 	visitEqualBool(node : EqualBool) : any;
 	visitNotEqualBool(node : NotEqualBool) : any;
-	visitArithmeticOperation(node : ArithmeticOperation) : any;
 	visitgetDistance(node : getDistance) : any;
 	visitgetTimestamp(node : getTimestamp) : any;
 	visitsetSpeed(node : setSpeed) : any;
@@ -42,10 +32,8 @@ export interface AseRobotVisitor{
 	visitLower(node : Lower) : any;
 	visitConstBool(node : ConstBool) : any;
 	visitVar(node : Var) : any;
-	/*visitAddition(node : Addition) : any;
-	visitDivision(node : Division) : any;
-	visitMultiplication(node : Multiplication) : any;
-	visitSubstraction(node : Substraction) : any;*/
+	visitMultExpression(node : MultExpression) : any;
+    visitAddExpression(node : AddExpression) : any;
 	visitConstInt(node : ConstInt) : any;
 	visitBack(node : Back) : any;
 	visitFront(node : Front) : any;
@@ -60,6 +48,30 @@ export class Condition implements ASTInterfaces.Condition {
     // you can find them in generated/ast.ts
     constructor(public $type: 'Condition'){}
     accept(AseRobotVisitor: AseRobotVisitor) : any {}
+}
+
+export class MultExpression implements ASTInterfaces.MultExpression {
+    constructor(public $type: 'MultExpression'){}
+    $container!: AddExpression;
+    op!: string;
+    singlevalue!: ArithmeticExpression[];
+    $containerProperty?: string | undefined;
+    $containerIndex?: number | undefined;
+    $cstNode?: CstNode | undefined;
+    $document?: LangiumDocument<AstNode> | undefined;
+    accept(AseRobotVisitor: AseRobotVisitor) : any {}
+}
+
+export class AddExpression implements ASTInterfaces.AddExpression {
+    $container!: AddExpression;
+    $type!: 'AddExpression';
+    addExpression?: AddExpression | undefined;
+    multexpression!: MultExpression[];
+    op!: string;
+    $containerProperty?: string | undefined;
+    $containerIndex?: number | undefined;
+    $cstNode?: CstNode | undefined;
+    $document?: LangiumDocument<AstNode> | undefined;
 }
 
 export class Else implements ASTInterfaces.Else {
@@ -357,9 +369,7 @@ export class And implements ASTInterfaces.And {
     // simply copy-paste the interface fields as public parameters
     // you can find them in generated/ast.ts
     constructor(public $type: 'And'){}
-    $container!: Or;
-    comparison!: Comparison[];
-    singlevaluebool!: SingleValueBool[];
+    condition!: Condition[];
     $containerProperty?: string | undefined;
     $containerIndex?: number | undefined;
     $cstNode?: CstNode | undefined;
@@ -372,8 +382,7 @@ export class Or implements ASTInterfaces.Or {
     // simply copy-paste the interface fields as public parameters
     // you can find them in generated/ast.ts
     constructor(public $type: 'Or'){}
-    and!: And[];
-    comparison!: Comparison[];
+    condition!: Condition[];
     $container?: AstNode | undefined;
     $containerProperty?: string | undefined;
     $containerIndex?: number | undefined;
