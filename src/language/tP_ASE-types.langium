@@ -38,6 +38,17 @@ interface Unit {
 interface ArithmeticExpression extends Expression {
 }
 
+interface AddExpression extends ArithmeticExpression {
+	addExpression?: AddExpression
+	multexpression: MultExpression[]
+	op: string
+}
+
+interface MultExpression extends ArithmeticExpression {
+	singlevalue: ArithmeticExpression[]
+	op: string
+}
+
 interface If extends ControlStructure {
 	elseif: Elseif[]
 	else?: Else
@@ -171,30 +182,10 @@ interface ConstInt extends SingleValue {
 	integerValue?: number
 }
 
-interface Addition extends ArithmeticOperation {
-	multiplication?: Multiplication[]
-	division?: Division[]
-}
-
-interface Substraction extends ArithmeticOperation {
-	multiplication?: Multiplication[]
-	division?: Division[]
-}
 interface ArithmeticOperation extends ArithmeticExpression {
 	
 }
 
-interface Multiplication extends ArithmeticOperation {
-	singlevalue?: SingleValue[]
-	addition?: Addition[]
-	substraction?: Substraction[]
-}
-
-interface Division extends ArithmeticOperation {
-	singlevalue?: SingleValue[]
-	addition?: Addition[]
-	substraction?: Substraction[]
-}
 
 interface ConstBool extends SingleValueBool {
 	BoolValue?: boolean

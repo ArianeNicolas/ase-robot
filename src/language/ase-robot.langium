@@ -36,8 +36,12 @@ SingleValueBool returns SingleValueBool:
 ;
 
 ArithmeticExpression returns ArithmeticExpression:
-    Addition | SingleValue | Multiplication | Substraction | Division
-; 
+    AddExpression
+;
+
+AddExpression returns AddExpression:
+    multexpression+=MultExpression (op=('+' | '-') multexpression+=MultExpression)* 
+;
 
 BoolExpression returns BoolExpression:
     SingleValueBool | BoolCondition
@@ -55,6 +59,9 @@ BoolCondition returns BoolCondition:
     EqualBool | NotEqualBool | Or 
 ;
 
+MultExpression returns MultExpression:
+    (singlevalue+=SingleValue|'('singlevalue+=ArithmeticExpression')') (op=('*' | '/') (singlevalue+=SingleValue|'('singlevalue+=ArithmeticExpression')') )*
+;
 
 Func returns Func:
     'let' ^type=Type name=ID '(' (parameter+=Parameter  ("," parameter+=Parameter  )*)? ')' '{' (statement+=Statement  )* '}'  
@@ -162,21 +169,6 @@ Or returns Or:
 
 ConstInt returns ConstInt:
     integerValue=INT
-;
-
-Addition returns Addition:
-     (multiplication+=Multiplication | division+=Division) ( '+' (multiplication+=Multiplication | division+=Division)*)?
-;
-Substraction returns Substraction:
-     (multiplication+=Multiplication | division+=Division) ( '-' (multiplication+=Multiplication | division+=Division)*)?
-;
-
-Multiplication returns Multiplication:
-    (singlevalue+=SingleValue | '('(addition+=Addition | substraction+=Substraction)')' ) ( '*' (singlevalue+=SingleValue | '('(addition+=Addition | substraction+=Substraction)')')*)?
-;
-
-Division returns Division:
-    (singlevalue+=SingleValue | '('(addition+=Addition | substraction+=Substraction)')' ) ( '/' (singlevalue+=SingleValue | '('(addition+=Addition | substraction+=Substraction)')')*)?
 ;
 
 Var returns Var:

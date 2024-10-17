@@ -1,28 +1,21 @@
-import {Addition, And, ArithmeticExpression, ArithmeticOperation, AseRobotVisitor, AssignVar, Back, Bool, BoolCondition, BoolExpression, cm, Comparison, Condition, ConstBool, ConstInt, ControlStructure, declaVar, Division, Else, Elseif, EqualBool, EqualInt, Expression, Front, Func, FunCall, getDistance, getTimestamp, Greater, If, LeftSide, Loop, Lower, mm, Movement, Multiplication, Nbr, NotEqualBool, NotEqualInt, Or, Parameter, Program, Return, RightSide, RobotFunc, RobotLogic, Rotation, setSpeed, SingleValue, SingleValueBool, Statement, Substraction, Type, Unit, Var, Void} from "../language/visitor.js"
+import {And, ArithmeticExpression, ArithmeticOperation, AseRobotVisitor, AssignVar, Back, Bool, BoolExpression, cm, Comparison, ConstBool, ConstInt, declaVar, Else, Elseif, EqualBool, EqualInt, Front, Func, FunCall, getDistance, getTimestamp, Greater, If, LeftSide, Loop, Lower, mm, Nbr, NotEqualBool, NotEqualInt, Or, Parameter, Program, Return, RightSide, RobotFunc, RobotLogic, Rotation, setSpeed, Type, Unit, Var, Void} from "../language/visitor.js"
 
 export class Interpreter implements AseRobotVisitor {
-    visitCondition(node: Condition) {
-        throw new Error("Method not implemented.");
-    }
+
+    vars = new Map<string, any>();
+
     visitElse(node: Else) {
-        throw new Error("Method not implemented.");
+        node.statement.forEach((statement) => statement.accept(this));
     }
     visitElseif(node: Elseif) {
-        throw new Error("Method not implemented.");
-    }
-    visitExpression(node: Expression) {
-        throw new Error("Method not implemented.");
+        if(node.condition.accept(this)){
+            node.statement.forEach((statement) => statement.accept(this));
+        }
     }
     visitFunc(node: Func) {
-        throw new Error("Method not implemented.");
-    }
-    visitControlStructure(node: ControlStructure) {
-        throw new Error("Method not implemented.");
+        node.statement.forEach((statement) => statement.accept(this));
     }
     visitParameter(node: Parameter) {
-        throw new Error("Method not implemented.");
-    }
-    visitStatement(node: Statement) {
         throw new Error("Method not implemented.");
     }
     visitType(node: Type) {
@@ -32,9 +25,6 @@ export class Interpreter implements AseRobotVisitor {
         throw new Error("Method not implemented.");
     }
     visitFunCall(node: FunCall) {
-        throw new Error("Method not implemented.");
-    }
-    visitBoolCondition(node: BoolCondition) {
         throw new Error("Method not implemented.");
     }
     visitArithmeticExpression(node: ArithmeticExpression) {
@@ -82,19 +72,13 @@ export class Interpreter implements AseRobotVisitor {
     AseRobotVisitor(node: Or) {
         throw new Error("Method not implemented.");
     }
-    visitEqualBool(node: EqualBool) {
-        throw new Error("Method not implemented.");
+    visitEqualBool(node: EqualBool): boolean {
+        return node.singlevaluebool[0].accept(this) === node.singlevaluebool[1].accept(this);
     }
-    visitNotEqualBool(node: NotEqualBool) {
-        throw new Error("Method not implemented.");
-    }
-    visitSingleValueBool(node: SingleValueBool) {
-        throw new Error("Method not implemented.");
+    visitNotEqualBool(node: NotEqualBool): boolean {
+        return node.singlevaluebool[0].accept(this) !== node.singlevaluebool[1].accept(this);
     }
     visitArithmeticOperation(node: ArithmeticOperation) {
-        throw new Error("Method not implemented.");
-    }
-    visitSingleValue(node: SingleValue) {
         throw new Error("Method not implemented.");
     }
     visitgetDistance(node: getDistance) {
@@ -107,49 +91,38 @@ export class Interpreter implements AseRobotVisitor {
         throw new Error("Method not implemented.");
     }
     visitIf(node: If) {
-        throw new Error("Method not implemented.");
+       if(node.condition.accept(this)){
+           node.statement.forEach((statement) => statement.accept(this));
+       }
     }
     visitLoop(node: Loop) {
-        throw new Error("Method not implemented.");
-    }
-    visitMovement(node: Movement) {
-        throw new Error("Method not implemented.");
+        while(node.condition.accept(this)){
+            node.statement.forEach((statement) => statement.accept(this));
+        }
     }
     visitRotation(node: Rotation) {
         throw new Error("Method not implemented.");
     }
-    visitEqualInt(node: EqualInt) {
-        throw new Error("Method not implemented.");
+    visitEqualInt(node: EqualInt): boolean {
+        return node.arithmeticexpression[0].accept(this) === node.arithmeticexpression[1].accept(this);
     }
-    visitNotEqualInt(node: NotEqualInt) {
-        throw new Error("Method not implemented.");
+    visitNotEqualInt(node: NotEqualInt): boolean {
+        return node.arithmeticexpression[0].accept(this) !== node.arithmeticexpression[1].accept(this);
     }
-    visitGreater(node: Greater) {
-        throw new Error("Method not implemented.");
+    visitGreater(node: Greater): boolean {
+        return node.arithmeticexpression[0].accept(this) > node.arithmeticexpression[1].accept(this);
     }
-    visitLower(node: Lower) {
-        throw new Error("Method not implemented.");
+    visitLower(node: Lower): boolean {
+        return node.arithmeticexpression[0].accept(this) < node.arithmeticexpression[1].accept(this);
     }
-    visitConstBool(node: ConstBool) {
-        throw new Error("Method not implemented.");
+    visitConstBool(node: ConstBool): boolean {
+        return node.BoolValue;
     }
-    visitVar(node: Var) {
-        throw new Error("Method not implemented.");
+    visitVar(node: Var): any {
+        return this.vars.get(node.name);
     }
-    visitAddition(node: Addition) {
-        throw new Error("Method not implemented.");
-    }
-    visitDivision(node: Division) {
-        throw new Error("Method not implemented.");
-    }
-    visitMultiplication(node: Multiplication) {
-        throw new Error("Method not implemented.");
-    }
-    visitSubstraction(node: Substraction) {
-        throw new Error("Method not implemented.");
-    }
-    visitConstInt(node: ConstInt) {
-        throw new Error("Method not implemented.");
+    visitConstInt(node: ConstInt): number {
+        return node.integerValue;
     }
     visitBack(node: Back) {
         throw new Error("Method not implemented.");
@@ -164,7 +137,7 @@ export class Interpreter implements AseRobotVisitor {
         throw new Error("Method not implemented.");
     }
     visitProgram(node: Program) {
-        throw new Error("Method not implemented.");
+        node.Func.forEach((func) => func.accept(this));
     }
 
 }

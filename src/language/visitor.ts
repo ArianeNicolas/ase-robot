@@ -1,21 +1,17 @@
 
 import * as ASTInterfaces from './generated/ast.js';
 import { AstNode, CstNode, LangiumDocument } from 'langium';
+import { AddExpression, MultExpression } from './generated/ast.js';
 
 export interface AseRobotVisitor{
-    visitCondition(node : Condition) : any;
 	visitElse(node : Else) : any;
 	visitElseif(node : Elseif) : any;
-	visitExpression(node : Expression) : any;
 	visitFunc(node : Func) : any;
 	visitProgram(node : Program) : any;
-	visitControlStructure(node : ControlStructure) : any;
 	visitParameter(node : Parameter) : any;
-	visitStatement(node : Statement) : any;
 	visitType(node : Type) : any;
 	visitUnit(node : Unit) : any;
 	visitFunCall(node : FunCall) : any;
-	visitBoolCondition(node : BoolCondition) : any;
 	visitArithmeticExpression(node : ArithmeticExpression) : any;
 	visitBoolExpression(node : BoolExpression) : any;
 	visitRobotFunc(node : RobotFunc) : any;
@@ -33,15 +29,12 @@ export interface AseRobotVisitor{
 	AseRobotVisitor(node : Or) : any;
 	visitEqualBool(node : EqualBool) : any;
 	visitNotEqualBool(node : NotEqualBool) : any;
-	visitSingleValueBool(node : SingleValueBool) : any;
 	visitArithmeticOperation(node : ArithmeticOperation) : any;
-	visitSingleValue(node : SingleValue) : any;
 	visitgetDistance(node : getDistance) : any;
 	visitgetTimestamp(node : getTimestamp) : any;
 	visitsetSpeed(node : setSpeed) : any;
 	visitIf(node : If) : any;
 	visitLoop(node : Loop) : any;
-	visitMovement(node : Movement) : any;
 	visitRotation(node : Rotation) : any;
 	visitEqualInt(node : EqualInt) : any;
 	visitNotEqualInt(node : NotEqualInt) : any;
@@ -49,10 +42,10 @@ export interface AseRobotVisitor{
 	visitLower(node : Lower) : any;
 	visitConstBool(node : ConstBool) : any;
 	visitVar(node : Var) : any;
-	visitAddition(node : Addition) : any;
+	/*visitAddition(node : Addition) : any;
 	visitDivision(node : Division) : any;
 	visitMultiplication(node : Multiplication) : any;
-	visitSubstraction(node : Substraction) : any;
+	visitSubstraction(node : Substraction) : any;*/
 	visitConstInt(node : ConstInt) : any;
 	visitBack(node : Back) : any;
 	visitFront(node : Front) : any;
@@ -74,8 +67,8 @@ export class Else implements ASTInterfaces.Else {
     // simply copy-paste the interface fields as public parameters
     // you can find them in generated/ast.ts
     constructor(public $type: 'Else'){}
-    $container!: ASTInterfaces.If;
-    statement!: ASTInterfaces.Statement[];
+    $container!: If;
+    statement!: Statement[];
     $containerProperty?: string | undefined;
     $containerIndex?: number | undefined;
     $cstNode?: CstNode | undefined;
@@ -88,9 +81,9 @@ export class Elseif implements ASTInterfaces.Elseif {
     // simply copy-paste the interface fields as public parameters
     // you can find them in generated/ast.ts
     constructor(public $type: 'Elseif'){}
-    $container!: ASTInterfaces.If;
-    condition!: ASTInterfaces.Condition;
-    statement!: ASTInterfaces.Statement[];
+    $container!: If;
+    condition!: Condition;
+    statement!: Statement[];
     $containerProperty?: string | undefined;
     $containerIndex?: number | undefined;
     $cstNode?: CstNode | undefined;
@@ -111,16 +104,16 @@ export class Func implements ASTInterfaces.Func {
     // simply copy-paste the interface fields as public parameters
     // you can find them in generated/ast.ts
     constructor(public $type: 'Func'){}
-    $container!: ASTInterfaces.Program;
+    $container!: Program;
     name!: string;
-    parameter!: ASTInterfaces.Parameter[];
-    statement!: ASTInterfaces.Statement[];
-    type!: ASTInterfaces.Type;
+    parameter!: Parameter[];
+    statement!: Statement[];
+    type!: Type;
     $containerProperty?: string | undefined;
     $containerIndex?: number | undefined;
     $cstNode?: CstNode | undefined;
     $document?: LangiumDocument<AstNode> | undefined;
-    accept(AseRobotVisitor: AseRobotVisitor) : any {}
+    accept(AseRobotVisitor: AseRobotVisitor) : any {AseRobotVisitor.visitFunc(this);}
 }
 
 export class Program implements ASTInterfaces.Program {
@@ -128,13 +121,13 @@ export class Program implements ASTInterfaces.Program {
     // simply copy-paste the interface fields as public parameters
     // you can find them in generated/ast.ts
     constructor(public $type: 'Program'){}
-    Func!: ASTInterfaces.Func[];
+    Func!: Func[];
     $container?: AstNode | undefined;
     $containerProperty?: string | undefined;
     $containerIndex?: number | undefined;
     $cstNode?: CstNode | undefined;
     $document?: LangiumDocument<AstNode> | undefined;
-    accept(AseRobotVisitor: AseRobotVisitor) : any {}
+    accept(AseRobotVisitor: AseRobotVisitor) : any {AseRobotVisitor.visitProgram(this);}
 }
 
 export class ControlStructure implements ASTInterfaces.ControlStructure {
@@ -142,8 +135,8 @@ export class ControlStructure implements ASTInterfaces.ControlStructure {
     // simply copy-paste the interface fields as public parameters
     // you can find them in generated/ast.ts
     constructor(public $type: 'ControlStructure'){}
-    condition!: ASTInterfaces.Condition;
-    statement!: ASTInterfaces.Statement[];
+    condition!: Condition;
+    statement!: Statement[];
     $container?: AstNode | undefined;
     $containerProperty?: string | undefined;
     $containerIndex?: number | undefined;
@@ -157,9 +150,9 @@ export class Parameter implements ASTInterfaces.Parameter {
     // simply copy-paste the interface fields as public parameters
     // you can find them in generated/ast.ts
     constructor(public $type: 'Parameter'){}
-    $container!: ASTInterfaces.Func;
+    $container!: Func;
     name!: string;
-    type!: ASTInterfaces.Type;
+    type!: Type;
     $containerProperty?: string | undefined;
     $containerIndex?: number | undefined;
     $cstNode?: CstNode | undefined;
@@ -197,7 +190,7 @@ export class FunCall implements ASTInterfaces.FunCall {
     // you can find them in generated/ast.ts
     constructor(public $type: 'FunCall'){}
     callName!: string;
-    parameters!: ASTInterfaces.Expression[];
+    parameters!: Expression[];
     $container?: AstNode | undefined;
     $containerProperty?: string | undefined;
     $containerIndex?: number | undefined;
@@ -211,6 +204,20 @@ export class BoolCondition implements ASTInterfaces.BoolCondition {
     // simply copy-paste the interface fields as public parameters
     // you can find them in generated/ast.ts
     constructor(public $type: 'BoolCondition'){}
+    accept(AseRobotVisitor: AseRobotVisitor) : any {}
+}
+
+export class ArithmeticCondition implements ASTInterfaces.ArithmeticCondition {
+    // the constructor must take all attribute of the implemented interface 
+    // simply copy-paste the interface fields as public parameters
+    // you can find them in generated/ast.ts
+    constructor(public $type: 'ArithmeticCondition'){}
+    arithmeticexpression: ArithmeticExpression[] = [];
+    $container?: AstNode | undefined;
+    $containerProperty?: string | undefined;
+    $containerIndex?: number | undefined;
+    $cstNode?: CstNode | undefined;
+    $document?: LangiumDocument<AstNode> | undefined;
     accept(AseRobotVisitor: AseRobotVisitor) : any {}
 }
 
@@ -243,8 +250,8 @@ export class AssignVar implements ASTInterfaces.AssignVar {
     // simply copy-paste the interface fields as public parameters
     // you can find them in generated/ast.ts
     constructor(public $type: 'AssignVar'){}
-    expression!: ASTInterfaces.Expression;
-    var_to_assign!: ASTInterfaces.Var;
+    expression!: Expression;
+    var_to_assign!: Var;
     $container?: AstNode | undefined;
     $containerProperty?: string | undefined;
     $containerIndex?: number | undefined;
@@ -259,8 +266,8 @@ export class declaVar implements ASTInterfaces.declaVar {
     // you can find them in generated/ast.ts
     constructor(public $type: 'declaVar'){}
     declaName!: string;
-    expression!: ASTInterfaces.Expression;
-    type!: ASTInterfaces.Type;
+    expression!: Expression;
+    type!: Type;
     $container?: AstNode | undefined;
     $containerProperty?: string | undefined;
     $containerIndex?: number | undefined;
@@ -274,7 +281,7 @@ export class Return implements ASTInterfaces.Return {
     // simply copy-paste the interface fields as public parameters
     // you can find them in generated/ast.ts
     constructor(public $type: 'Return'){}
-    expression!: ASTInterfaces.Expression;
+    expression!: Expression;
     $container?: AstNode | undefined;
     $containerProperty?: string | undefined;
     $containerIndex?: number | undefined;
@@ -336,7 +343,7 @@ export class Comparison implements ASTInterfaces.Comparison {
     // simply copy-paste the interface fields as public parameters
     // you can find them in generated/ast.ts
     constructor(public $type: 'Comparison'){}
-    arithmeticexpression!: ASTInterfaces.ArithmeticExpression[];
+    arithmeticexpression!: ArithmeticExpression[];
     $container?: AstNode | undefined;
     $containerProperty?: string | undefined;
     $containerIndex?: number | undefined;
@@ -350,9 +357,9 @@ export class And implements ASTInterfaces.And {
     // simply copy-paste the interface fields as public parameters
     // you can find them in generated/ast.ts
     constructor(public $type: 'And'){}
-    $container!: ASTInterfaces.Or;
-    comparison!: ASTInterfaces.Comparison[];
-    singlevaluebool!: ASTInterfaces.SingleValueBool[];
+    $container!: Or;
+    comparison!: Comparison[];
+    singlevaluebool!: SingleValueBool[];
     $containerProperty?: string | undefined;
     $containerIndex?: number | undefined;
     $cstNode?: CstNode | undefined;
@@ -365,8 +372,8 @@ export class Or implements ASTInterfaces.Or {
     // simply copy-paste the interface fields as public parameters
     // you can find them in generated/ast.ts
     constructor(public $type: 'Or'){}
-    and!: ASTInterfaces.And[];
-    comparison!: ASTInterfaces.Comparison[];
+    and!: And[];
+    comparison!: Comparison[];
     $container?: AstNode | undefined;
     $containerProperty?: string | undefined;
     $containerIndex?: number | undefined;
@@ -380,7 +387,7 @@ export class EqualBool implements ASTInterfaces.EqualBool {
     // simply copy-paste the interface fields as public parameters
     // you can find them in generated/ast.ts
     constructor(public $type: 'EqualBool'){}
-    singlevaluebool!: ASTInterfaces.SingleValueBool[];
+    singlevaluebool!: SingleValueBool[];
     $container?: AstNode | undefined;
     $containerProperty?: string | undefined;
     $containerIndex?: number | undefined;
@@ -394,7 +401,7 @@ export class NotEqualBool implements ASTInterfaces.NotEqualBool {
     // simply copy-paste the interface fields as public parameters
     // you can find them in generated/ast.ts
     constructor(public $type: 'NotEqualBool'){}
-    singlevaluebool!: ASTInterfaces.SingleValueBool[];
+    singlevaluebool!: SingleValueBool[];
     $container?: AstNode | undefined;
     $containerProperty?: string | undefined;
     $containerIndex?: number | undefined;
@@ -416,7 +423,7 @@ export class ArithmeticOperation implements ASTInterfaces.ArithmeticOperation {
     // simply copy-paste the interface fields as public parameters
     // you can find them in generated/ast.ts
     constructor(public $type: 'ArithmeticOperation'){}
-    $container!: ASTInterfaces.Addition | ASTInterfaces.Division | ASTInterfaces.Multiplication | ASTInterfaces.Substraction;
+    $container!: AddExpression | MultExpression;
     $containerProperty?: string | undefined;
     $containerIndex?: number | undefined;
     $cstNode?: CstNode | undefined;
@@ -453,8 +460,8 @@ export class setSpeed implements ASTInterfaces.setSpeed {
     // simply copy-paste the interface fields as public parameters
     // you can find them in generated/ast.ts
     constructor(public $type: 'setSpeed'){}
-    speed!: ASTInterfaces.ArithmeticExpression;
-    unit!: ASTInterfaces.Unit;
+    speed!: ArithmeticExpression;
+    unit!: Unit;
     $container?: AstNode | undefined;
     $containerProperty?: string | undefined;
     $containerIndex?: number | undefined;
@@ -468,10 +475,10 @@ export class If implements ASTInterfaces.If {
     // simply copy-paste the interface fields as public parameters
     // you can find them in generated/ast.ts
     constructor(public $type: 'If'){}
-    else?: ASTInterfaces.Else | undefined;
-    elseif!: ASTInterfaces.Elseif[];
-    condition!: ASTInterfaces.Condition;
-    statement!: ASTInterfaces.Statement[];
+    else?: Else | undefined;
+    elseif!: Elseif[];
+    condition!: Condition;
+    statement!: Statement[];
     $container?: AstNode | undefined;
     $containerProperty?: string | undefined;
     $containerIndex?: number | undefined;
@@ -485,8 +492,8 @@ export class Loop implements ASTInterfaces.Loop {
     // simply copy-paste the interface fields as public parameters
     // you can find them in generated/ast.ts
     constructor(public $type: 'Loop'){}
-    condition!: ASTInterfaces.Condition;
-    statement!: ASTInterfaces.Statement[];
+    condition!: Condition;
+    statement!: Statement[];
     $container?: AstNode | undefined;
     $containerProperty?: string | undefined;
     $containerIndex?: number | undefined;
@@ -500,8 +507,8 @@ export class Movement implements ASTInterfaces.Movement {
     // simply copy-paste the interface fields as public parameters
     // you can find them in generated/ast.ts
     constructor(public $type: 'Movement'){}
-    expression!: ASTInterfaces.ArithmeticExpression;
-    unit1!: ASTInterfaces.Unit;
+    expression!: ArithmeticExpression;
+    unit1!: Unit;
     $container?: AstNode | undefined;
     $containerProperty?: string | undefined;
     $containerIndex?: number | undefined;
@@ -515,7 +522,7 @@ export class Rotation implements ASTInterfaces.Rotation {
     // simply copy-paste the interface fields as public parameters
     // you can find them in generated/ast.ts
     constructor(public $type: 'Rotation'){}
-    angle!: ASTInterfaces.ArithmeticExpression;
+    angle!: ArithmeticExpression;
     $container?: AstNode | undefined;
     $containerProperty?: string | undefined;
     $containerIndex?: number | undefined;
@@ -529,7 +536,7 @@ export class EqualInt implements ASTInterfaces.EqualInt {
     // simply copy-paste the interface fields as public parameters
     // you can find them in generated/ast.ts
     constructor(public $type: 'EqualInt'){}
-    arithmeticexpression!: ASTInterfaces.ArithmeticExpression[];
+    arithmeticexpression!: ArithmeticExpression[];
     $container?: AstNode | undefined;
     $containerProperty?: string | undefined;
     $containerIndex?: number | undefined;
@@ -543,7 +550,7 @@ export class NotEqualInt implements ASTInterfaces.NotEqualInt {
     // simply copy-paste the interface fields as public parameters
     // you can find them in generated/ast.ts
     constructor(public $type: 'NotEqualInt'){}
-    arithmeticexpression!: ASTInterfaces.ArithmeticExpression[];
+    arithmeticexpression!: ArithmeticExpression[];
     $container?: AstNode | undefined;
     $containerProperty?: string | undefined;
     $containerIndex?: number | undefined;
@@ -557,7 +564,7 @@ export class Greater implements ASTInterfaces.Greater {
     // simply copy-paste the interface fields as public parameters
     // you can find them in generated/ast.ts
     constructor(public $type: 'Greater'){}
-    arithmeticexpression!: ASTInterfaces.ArithmeticExpression[];
+    arithmeticexpression!: ArithmeticExpression[];
     $container?: AstNode | undefined;
     $containerProperty?: string | undefined;
     $containerIndex?: number | undefined;
@@ -571,7 +578,7 @@ export class Lower implements ASTInterfaces.Lower {
     // simply copy-paste the interface fields as public parameters
     // you can find them in generated/ast.ts
     constructor(public $type: 'Lower'){}
-    arithmeticexpression!: ASTInterfaces.ArithmeticExpression[];
+    arithmeticexpression!: ArithmeticExpression[];
     $container?: AstNode | undefined;
     $containerProperty?: string | undefined;
     $containerIndex?: number | undefined;
@@ -599,7 +606,7 @@ export class Var implements ASTInterfaces.Var {
     // simply copy-paste the interface fields as public parameters
     // you can find them in generated/ast.ts
     constructor(public $type: 'Var'){}
-    $container!: ASTInterfaces.AssignVar;
+    $container!: AssignVar;
     name!: string;
     $containerProperty?: string | undefined;
     $containerIndex?: number | undefined;
@@ -608,14 +615,14 @@ export class Var implements ASTInterfaces.Var {
     accept(AseRobotVisitor: AseRobotVisitor) : any {}
 }
 
-export class Addition implements ASTInterfaces.Addition {
+/*export class Addition implements ASTInterfaces.Addition {
     // the constructor must take all attribute of the implemented interface 
     // simply copy-paste the interface fields as public parameters
     // you can find them in generated/ast.ts
     constructor(public $type: 'Addition'){}
-    $container!: ASTInterfaces.Division | ASTInterfaces.Multiplication;
-    division!: ASTInterfaces.Division[];
-    multiplication!: ASTInterfaces.Multiplication[];
+    $container!: Division | Multiplication;
+    division!: Division[];
+    multiplication!: Multiplication[];
     $containerProperty?: string | undefined;
     $containerIndex?: number | undefined;
     $cstNode?: CstNode | undefined;
@@ -628,10 +635,10 @@ export class Division implements ASTInterfaces.Division {
     // simply copy-paste the interface fields as public parameters
     // you can find them in generated/ast.ts
     constructor(public $type: 'Division'){}
-    $container!: ASTInterfaces.Addition | ASTInterfaces.Substraction;
-    addition!: ASTInterfaces.Addition[];
-    singlevalue!: ASTInterfaces.SingleValue[];
-    substraction!: ASTInterfaces.Substraction[];
+    $container!: Addition | Substraction;
+    addition!: Addition[];
+    singlevalue!: SingleValue[];
+    substraction!: Substraction[];
     $containerProperty?: string | undefined;
     $containerIndex?: number | undefined;
     $cstNode?: CstNode | undefined;
@@ -644,10 +651,10 @@ export class Multiplication implements ASTInterfaces.Multiplication {
     // simply copy-paste the interface fields as public parameters
     // you can find them in generated/ast.ts
     constructor(public $type: 'Multiplication'){}
-    $container!: ASTInterfaces.Addition | ASTInterfaces.Substraction;
-    addition!: ASTInterfaces.Addition[];
-    singlevalue!: ASTInterfaces.SingleValue[];
-    substraction!: ASTInterfaces.Substraction[];
+    $container!: Addition | Substraction;
+    addition!: Addition[];
+    singlevalue!: SingleValue[];
+    substraction!: Substraction[];
     $containerProperty?: string | undefined;
     $containerIndex?: number | undefined;
     $cstNode?: CstNode | undefined;
@@ -660,21 +667,27 @@ export class Substraction implements ASTInterfaces.Substraction {
     // simply copy-paste the interface fields as public parameters
     // you can find them in generated/ast.ts
     constructor(public $type: 'Substraction'){}
-    $container!: ASTInterfaces.Division | ASTInterfaces.Multiplication;
-    division!: ASTInterfaces.Division[];
-    multiplication!: ASTInterfaces.Multiplication[];
+    $container!: Division | Multiplication;
+    division!: Division[];
+    multiplication!: Multiplication[];
     $containerProperty?: string | undefined;
     $containerIndex?: number | undefined;
     $cstNode?: CstNode | undefined;
     $document?: LangiumDocument<AstNode> | undefined;
     accept(AseRobotVisitor: AseRobotVisitor) : any {}
-}
+}*/
 
 export class ConstInt implements ASTInterfaces.ConstInt {
     // the constructor must take all attribute of the implemented interface 
     // simply copy-paste the interface fields as public parameters
     // you can find them in generated/ast.ts
     constructor(public $type: 'ConstInt'){}
+    integerValue!: number;
+    $container?: AstNode | undefined;
+    $containerProperty?: string | undefined;
+    $containerIndex?: number | undefined;
+    $cstNode?: CstNode | undefined;
+    $document?: LangiumDocument<AstNode> | undefined;
     accept(AseRobotVisitor: AseRobotVisitor) : any {}
 }
 
@@ -683,8 +696,8 @@ export class Back implements ASTInterfaces.Back {
     // simply copy-paste the interface fields as public parameters
     // you can find them in generated/ast.ts
     constructor(public $type: 'Back'){}
-    expression!: ASTInterfaces.ArithmeticExpression;
-    unit1!: ASTInterfaces.Unit;
+    expression!: ArithmeticExpression;
+    unit1!: Unit;
     $container?: AstNode | undefined;
     $containerProperty?: string | undefined;
     $containerIndex?: number | undefined;
@@ -698,8 +711,8 @@ export class Front implements ASTInterfaces.Front {
     // simply copy-paste the interface fields as public parameters
     // you can find them in generated/ast.ts
     constructor(public $type: 'Front'){}
-    expression!: ASTInterfaces.ArithmeticExpression;
-    unit1!: ASTInterfaces.Unit;
+    expression!: ArithmeticExpression;
+    unit1!: Unit;
     $container?: AstNode | undefined;
     $containerProperty?: string | undefined;
     $containerIndex?: number | undefined;
@@ -713,8 +726,8 @@ export class LeftSide implements ASTInterfaces.LeftSide {
     // simply copy-paste the interface fields as public parameters
     // you can find them in generated/ast.ts
     constructor(public $type: 'LeftSide'){}
-    expression!: ASTInterfaces.ArithmeticExpression;
-    unit1!: ASTInterfaces.Unit;
+    expression!: ArithmeticExpression;
+    unit1!: Unit;
     $container?: AstNode | undefined;
     $containerProperty?: string | undefined;
     $containerIndex?: number | undefined;
@@ -728,8 +741,8 @@ export class RightSide implements ASTInterfaces.RightSide {
     // simply copy-paste the interface fields as public parameters
     // you can find them in generated/ast.ts
     constructor(public $type: 'RightSide'){}
-    expression!: ASTInterfaces.ArithmeticExpression;
-    unit1!: ASTInterfaces.Unit;
+    expression!: ArithmeticExpression;
+    unit1!: Unit;
     $container?: AstNode | undefined;
     $containerProperty?: string | undefined;
     $containerIndex?: number | undefined;

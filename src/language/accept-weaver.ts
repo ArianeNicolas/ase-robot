@@ -20,20 +20,15 @@ export class AseRobotAcceptWeaver {
     
     // TODO : Remove lines for abstract concepts
     checks: ValidationChecks<AseRobotAstType> = {
-        Condition : this.weaveCondition,
 		Else : this.weaveElse,
 		Elseif : this.weaveElseif,
-		Expression : this.weaveExpression,
 		Func : this.weaveFunc,
 		Program : this.weaveProgram,
 		ArithmeticExpression : this.weaveArithmeticExpression,
-		ControlStructure : this.weaveControlStructure,
 		Parameter : this.weaveParameter,
-		Statement : this.weaveStatement,
 		Type : this.weaveType,
 		Unit : this.weaveUnit,
 		FunCall : this.weaveFunCall,
-		BoolCondition : this.weaveBoolCondition,
 		BoolExpression : this.weaveBoolExpression,
 		RobotFunc : this.weaveRobotFunc,
 		AssignVar : this.weaveAssignVar,
@@ -50,15 +45,12 @@ export class AseRobotAcceptWeaver {
 		Or : this.weaveOr,
 		EqualBool : this.weaveEqualBool,
 		NotEqualBool : this.weaveNotEqualBool,
-		SingleValueBool : this.weaveSingleValueBool,
 		ArithmeticOperation : this.weaveArithmeticOperation,
-		SingleValue : this.weaveSingleValue,
 		getDistance : this.weavegetDistance,
 		getTimestamp : this.weavegetTimestamp,
 		setSpeed : this.weavesetSpeed,
 		If : this.weaveIf,
 		Loop : this.weaveLoop,
-		Movement : this.weaveMovement,
 		Rotation : this.weaveRotation,
 		EqualInt : this.weaveEqualInt,
 		NotEqualInt : this.weaveNotEqualInt,
@@ -66,10 +58,6 @@ export class AseRobotAcceptWeaver {
 		Lower : this.weaveLower,
 		ConstBool : this.weaveConstBool,
 		Var : this.weaveVar,
-		Addition : this.weaveAddition,
-		Division : this.weaveDivision,
-		Multiplication : this.weaveMultiplication,
-		Substraction : this.weaveSubstraction,
 		ConstInt : this.weaveConstInt,
 		Back : this.weaveBack,
 		Front : this.weaveFront,
@@ -78,9 +66,7 @@ export class AseRobotAcceptWeaver {
     };
 
     
-weaveCondition(node : InterfaceAST.Condition, accept : ValidationAcceptor) : void {
-    (<any> node).accept = (AseRobotVisitor: AseRobotVisitor) => { return AseRobotVisitor.visitCondition(node as unknown as ClassAST.Condition); }
-}
+
 
 weaveElse(node : InterfaceAST.Else, accept : ValidationAcceptor) : void {
     (<any> node).accept = (AseRobotVisitor: AseRobotVisitor) => { return AseRobotVisitor.visitElse(node as unknown as ClassAST.Else); }
@@ -90,9 +76,7 @@ weaveElseif(node : InterfaceAST.Elseif, accept : ValidationAcceptor) : void {
     (<any> node).accept = (AseRobotVisitor: AseRobotVisitor) => { return AseRobotVisitor.visitElseif(node as unknown as ClassAST.Elseif); }
 }
 
-weaveExpression(node : InterfaceAST.Expression, accept : ValidationAcceptor) : void {
-    (<any> node).accept = (AseRobotVisitor: AseRobotVisitor) => { return AseRobotVisitor.visitExpression(node as unknown as ClassAST.Expression); }
-}
+
 
 weaveFunc(node : InterfaceAST.Func, accept : ValidationAcceptor) : void {
     (<any> node).accept = (AseRobotVisitor: AseRobotVisitor) => { return AseRobotVisitor.visitFunc(node as unknown as ClassAST.Func); }
@@ -103,17 +87,13 @@ weaveProgram(node : InterfaceAST.Program, accept : ValidationAcceptor) : void {
 }
 
 
-weaveControlStructure(node : InterfaceAST.ControlStructure, accept : ValidationAcceptor) : void {
-    (<any> node).accept = (AseRobotVisitor: AseRobotVisitor) => { return AseRobotVisitor.visitControlStructure(node as unknown as ClassAST.ControlStructure); }
-}
+
 
 weaveParameter(node : InterfaceAST.Parameter, accept : ValidationAcceptor) : void {
     (<any> node).accept = (AseRobotVisitor: AseRobotVisitor) => { return AseRobotVisitor.visitParameter(node as unknown as ClassAST.Parameter); }
 }
 
-weaveStatement(node : InterfaceAST.Statement, accept : ValidationAcceptor) : void {
-    (<any> node).accept = (AseRobotVisitor: AseRobotVisitor) => { return AseRobotVisitor.visitStatement(node as unknown as ClassAST.Statement); }
-}
+
 
 weaveType(node : InterfaceAST.Type, accept : ValidationAcceptor) : void {
     (<any> node).accept = (AseRobotVisitor: AseRobotVisitor) => { return AseRobotVisitor.visitType(node as unknown as ClassAST.Type); }
@@ -127,9 +107,7 @@ weaveFunCall(node : InterfaceAST.FunCall, accept : ValidationAcceptor) : void {
     (<any> node).accept = (AseRobotVisitor: AseRobotVisitor) => { return AseRobotVisitor.visitFunCall(node as unknown as ClassAST.FunCall); }
 }
 
-weaveBoolCondition(node : InterfaceAST.BoolCondition, accept : ValidationAcceptor) : void {
-    (<any> node).accept = (AseRobotVisitor: AseRobotVisitor) => { return AseRobotVisitor.visitBoolCondition(node as unknown as ClassAST.BoolCondition); }
-}
+
 
 weaveArithmeticExpression(node : InterfaceAST.ArithmeticExpression, accept : ValidationAcceptor) : void {
     (<any> node).accept = (AseRobotVisitor: AseRobotVisitor) => { return AseRobotVisitor.visitArithmeticExpression(node as unknown as ClassAST.ArithmeticExpression); }
@@ -199,17 +177,13 @@ weaveNotEqualBool(node : InterfaceAST.NotEqualBool, accept : ValidationAcceptor)
     (<any> node).accept = (AseRobotVisitor: AseRobotVisitor) => { return AseRobotVisitor.visitNotEqualBool(node as unknown as ClassAST.NotEqualBool); }
 }
 
-weaveSingleValueBool(node : InterfaceAST.SingleValueBool, accept : ValidationAcceptor) : void {
-    (<any> node).accept = (AseRobotVisitor: AseRobotVisitor) => { return AseRobotVisitor.visitSingleValueBool(node as unknown as ClassAST.SingleValueBool); }
-}
+
 
 weaveArithmeticOperation(node : InterfaceAST.ArithmeticOperation, accept : ValidationAcceptor) : void {
     (<any> node).accept = (AseRobotVisitor: AseRobotVisitor) => { return AseRobotVisitor.visitArithmeticOperation(node as unknown as ClassAST.ArithmeticOperation); }
 }
 
-weaveSingleValue(node : InterfaceAST.SingleValue, accept : ValidationAcceptor) : void {
-    (<any> node).accept = (AseRobotVisitor: AseRobotVisitor) => { return AseRobotVisitor.visitSingleValue(node as unknown as ClassAST.SingleValue); }
-}
+
 
 weavegetDistance(node : InterfaceAST.getDistance, accept : ValidationAcceptor) : void {
     (<any> node).accept = (AseRobotVisitor: AseRobotVisitor) => { return AseRobotVisitor.visitgetDistance(node as unknown as ClassAST.getDistance); }
@@ -231,9 +205,7 @@ weaveLoop(node : InterfaceAST.Loop, accept : ValidationAcceptor) : void {
     (<any> node).accept = (AseRobotVisitor: AseRobotVisitor) => { return AseRobotVisitor.visitLoop(node as unknown as ClassAST.Loop); }
 }
 
-weaveMovement(node : InterfaceAST.Movement, accept : ValidationAcceptor) : void {
-    (<any> node).accept = (AseRobotVisitor: AseRobotVisitor) => { return AseRobotVisitor.visitMovement(node as unknown as ClassAST.Movement); }
-}
+
 
 weaveRotation(node : InterfaceAST.Rotation, accept : ValidationAcceptor) : void {
     (<any> node).accept = (AseRobotVisitor: AseRobotVisitor) => { return AseRobotVisitor.visitRotation(node as unknown as ClassAST.Rotation); }
@@ -261,22 +233,6 @@ weaveConstBool(node : InterfaceAST.ConstBool, accept : ValidationAcceptor) : voi
 
 weaveVar(node : InterfaceAST.Var, accept : ValidationAcceptor) : void {
     (<any> node).accept = (AseRobotVisitor: AseRobotVisitor) => { return AseRobotVisitor.visitVar(node as unknown as ClassAST.Var); }
-}
-
-weaveAddition(node : InterfaceAST.Addition, accept : ValidationAcceptor) : void {
-    (<any> node).accept = (AseRobotVisitor: AseRobotVisitor) => { return AseRobotVisitor.visitAddition(node as unknown as ClassAST.Addition); }
-}
-
-weaveDivision(node : InterfaceAST.Division, accept : ValidationAcceptor) : void {
-    (<any> node).accept = (AseRobotVisitor: AseRobotVisitor) => { return AseRobotVisitor.visitDivision(node as unknown as ClassAST.Division); }
-}
-
-weaveMultiplication(node : InterfaceAST.Multiplication, accept : ValidationAcceptor) : void {
-    (<any> node).accept = (AseRobotVisitor: AseRobotVisitor) => { return AseRobotVisitor.visitMultiplication(node as unknown as ClassAST.Multiplication); }
-}
-
-weaveSubstraction(node : InterfaceAST.Substraction, accept : ValidationAcceptor) : void {
-    (<any> node).accept = (AseRobotVisitor: AseRobotVisitor) => { return AseRobotVisitor.visitSubstraction(node as unknown as ClassAST.Substraction); }
 }
 
 weaveConstInt(node : InterfaceAST.ConstInt, accept : ValidationAcceptor) : void {
