@@ -1,7 +1,7 @@
 import type { DefaultSharedModuleContext, LangiumServices, LangiumSharedServices, Module, PartialLangiumServices } from 'langium';
 import { createDefaultModule, createDefaultSharedModule, inject } from 'langium';
 import { AseRobotGeneratedModule, AseRobotGeneratedSharedModule } from './generated/module.js';
-import { AseRobotValidator, registerValidationChecks } from './ase-robot-validator.js';
+import { AseRobotAcceptWeaver, AseRobotValidator, registerValidationChecks } from './ase-robot-validator.js';
 
 /**
  * Declaration of custom services - add your own service classes here.
@@ -9,6 +9,9 @@ import { AseRobotValidator, registerValidationChecks } from './ase-robot-validat
 export type AseRobotAddedServices = {
     validation: {
         AseRobotValidator: AseRobotValidator
+    }
+    acceptweaver: {
+        AseRobotAcceptWeaver: AseRobotAcceptWeaver
     }
 }
 
@@ -26,6 +29,9 @@ export type AseRobotServices = LangiumServices & AseRobotAddedServices
 export const AseRobotModule: Module<AseRobotServices, PartialLangiumServices & AseRobotAddedServices> = {
     validation: {
         AseRobotValidator: () => new AseRobotValidator()
+    },
+    acceptweaver: {
+        AseRobotAcceptWeaver: () => new AseRobotAcceptWeaver()
     }
 };
 
