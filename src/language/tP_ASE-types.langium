@@ -77,7 +77,7 @@ interface RightSide extends Movement {
 }
 
 interface Rotation extends RobotLogic {
-	angle?: ArithmeticExpression
+	angle: ArithmeticExpression
 }
 
 interface setSpeed extends RobotFunc {
@@ -102,7 +102,7 @@ interface declaVar extends Statement {
 
 interface FunCall extends Statement, SingleValue, SingleValueBool {
 	callName: Str
-	expression: Expression[]
+	parameters: Expression[]
 }
 
 interface SingleValue extends ArithmeticExpression {

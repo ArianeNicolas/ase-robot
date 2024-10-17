@@ -34,6 +34,7 @@ export class AseRobotValidator {
                 }
             }
             let parameters = new Map<string, Type>();
+
             for(const param of func.parameter){
                 parameters.set(param.name, param.type);
             }
@@ -53,32 +54,11 @@ export class AseRobotValidator {
                         accept('error','Function doesnt exist', {node: s, property: 'callName'});
                     }
                     else{
-                        let parameters = new Map<string, Type>();
-                        let function: ProgramFunction = knownFunctions.get(s.callName);
-                        for(const param of s.parameter){
-                            parameters.set(param.name, param.type);
-                        }
-                        for(const f of knownFunctions){
-                            if(f.name === s.callName){
-                                if(f.parameters.size !== parameters.size){
-                                    accept('error','Function doesnt have the same amount of parameters', {node: s, property: 'parameter'});
-                                }
-                                else{
-                                    for(const p of f.parameters.keys()){
-                                        if(!parameters.has(p)){
-                                            accept('error','Function doesnt have the same parameters', {node: s, property: 'parameter'});
-                                        }
-                                        else{
-                                            if(f.parameters.get(p) !== parameters.get(p)){
-                                                accept('error','Function doesnt have the same parameters', {node: s, property: 'parameter'});
-                                            }
-                                        }
-                                    }
-                                }
-                            }
+                        let f = knownFunctions.get(s.callName);
+                        if(f?.parameters.size != s.parameters.length) {
+                            accept('error', 'Wrong number of arguments', {node: s, property: 'parameters'});
                         }
                     }
-
                 }
             }
         }

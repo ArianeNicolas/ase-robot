@@ -20,7 +20,7 @@ Condition returns Condition:
 ;
 
 Expression returns Expression:
-    setSpeed | getDistance | getTimestamp | ArithmeticExpression | BoolExpression | ArithmeticCondition
+    getDistance | getTimestamp | ArithmeticExpression | BoolExpression | ArithmeticCondition
 ;
 
 Unit returns Unit:
@@ -114,7 +114,7 @@ declaVar returns declaVar:
 ;
 
 FunCall returns FunCall:
-    callName=ID '(' (expression+=Expression  ("," expression+=Expression)*)? ')' | getDistance | getTimestamp
+    callName=ID '(' (parameters+=Expression  ("," parameters+=Expression)*)? ')' | getDistance | getTimestamp
 ;
 
 Return returns Return:

@@ -3,7 +3,7 @@ import chalk from 'chalk';
 import { Command } from 'commander';
 import { AseRobotLanguageMetaData } from '../language/generated/module.js';
 import { createAseRobotServices } from '../language/ase-robot-module.js';
-import { extractAstNode } from './cli-util.js';
+import { extractAstNode, extractDocument } from './cli-util.js';
 import { generateJavaScript } from './generator.js';
 import { NodeFileSystem } from 'langium/node';
 
@@ -12,6 +12,23 @@ export const generateAction = async (fileName: string, opts: GenerateOptions): P
     const model = await extractAstNode<Program>(fileName, services);
     const generatedFilePath = generateJavaScript(model, fileName, opts.destination);
     console.log(chalk.green(`JavaScript code generated successfully: ${generatedFilePath}`));
+};
+
+export const parseAndValidate = async (fileName: string): Promise<void> => {
+    // retrieve the services for our language
+    const services = createAseRobotServices(NodeFileSystem).AseRobot;
+    // extract a document for our program
+    const document = await extractDocument(fileName, services);
+    // extract the parse result details
+    const parseResult = document.parseResult;
+    // verify no lexer, parser, or general diagnostic errors show up
+    if (parseResult.lexerErrors.length === 0 && 
+        parseResult.parserErrors.length === 0
+    ) {
+        console.log(chalk.green(`Parsed and validated ${fileName} successfully!`));
+    } else {
+        console.log(chalk.red(`Failed to parse and validate ${fileName}!`));
+    }
 };
 
 export type GenerateOptions = {
@@ -23,7 +40,7 @@ export default function(): void {
 
     program
         // eslint-disable-next-line @typescript-eslint/no-var-requires
-        .version(require('../../package.json').version);
+        .version("0.0.1");
 
     const fileExtensions = AseRobotLanguageMetaData.fileExtensions.join(', ');
     program
@@ -33,5 +50,10 @@ export default function(): void {
         .description('generates JavaScript code that prints "Hello, {name}!" for each greeting in a source file')
         .action(generateAction);
 
+    program
+        .command('parseAndValidate')
+        .argument('<file>', 'Source file to parse & validate (ending in ${fileExtensions})')
+        .description('Indicates where a program parses & validates successfully, but produces no output code')
+        .action(parseAndValidate)
     program.parse(process.argv);
 }
