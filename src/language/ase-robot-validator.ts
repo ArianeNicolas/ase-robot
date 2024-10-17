@@ -2,9 +2,6 @@ import type { ValidationAcceptor, ValidationChecks } from 'langium';
 import { AseRobotAstType, AssignVar, declaVar, Func, FunCall, Program, Statement, Type } from './generated/ast.js';
 import type { AseRobotServices } from './ase-robot-module.js';
 import { ProgramFunction } from './function.js';
-import * as InterfaceAST from '../language/generated/ast.js';
-import * as ClassAST from './visitor.js';
-import { AseRobotVisitor } from './visitor.js';
 
 /**
  * Register custom validation checks.
@@ -152,34 +149,5 @@ export class AseRobotValidator {
     }*/
 
 
-
-}
-
-/**
- * Register custom validation checks.
- * TODO : Call this function in the language module.ts file (see registerValidationChecks(...);)
- */
-export function weaveAcceptMethods(services: AseRobotServices) {
-    const registry = services.validation.ValidationRegistry;
-    const weaver = services.acceptweaver.AseRobotAcceptWeaver;
-    registry.register(weaver.checks, weaver);
-}
-
-/**
- * TODO :
- * You must implement a weaving function for each concrete concept of the language.
- * you will also need to fill the check data structure to map the weaving function to the Type of node
- */
-export class AseRobotAcceptWeaver {
-
-    weaveProgram(node : InterfaceAST.Program, accept : ValidationAcceptor) : void{
-        (<any> node).accept = (visitor: AseRobotVisitor) => {
-            return visitor.visitProgram(node as unknown as ClassAST.Program);
-        }
-    }
-
-    checks: ValidationChecks<AseRobotAstType> = {
-        Program : this.weaveProgram
-    };
 
 }

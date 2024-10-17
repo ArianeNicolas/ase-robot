@@ -14,7 +14,7 @@ export const generateAction = async (fileName: string, opts: GenerateOptions): P
     console.log(chalk.green(`JavaScript code generated successfully: ${generatedFilePath}`));
 };
 
-export const parseAndValidate = async (fileName: string): Promise<void> => {
+export const parseAndValidateCli = async (fileName: string): Promise<void> => {
     // retrieve the services for our language
     const services = createAseRobotServices(NodeFileSystem).AseRobot;
     // extract a document for our program
@@ -54,6 +54,6 @@ export default function(): void {
         .command('parseAndValidate')
         .argument('<file>', 'Source file to parse & validate (ending in ${fileExtensions})')
         .description('Indicates where a program parses & validates successfully, but produces no output code')
-        .action(parseAndValidate)
+        .action(parseAndValidateCli)
     program.parse(process.argv);
 }

@@ -1,16 +1,16 @@
-import type { DefaultSharedModuleContext, LangiumServices, LangiumSharedServices, Module, PartialLangiumServices } from 'langium';
-import { createDefaultModule, createDefaultSharedModule, inject } from 'langium';
+import type { DefaultSharedModuleContext, ExecuteCommandAcceptor, LangiumServices, LangiumSharedServices, Module, PartialLangiumServices } from 'langium';
+import { AbstractExecuteCommandHandler, createDefaultModule, createDefaultSharedModule, inject } from 'langium';
 import { AseRobotGeneratedModule, AseRobotGeneratedSharedModule } from './generated/module.js';
-import { AseRobotAcceptWeaver, AseRobotValidator, registerValidationChecks } from './ase-robot-validator.js';
+import { AseRobotValidator, registerValidationChecks } from './ase-robot-validator.js';
+import { AseRobotAcceptWeaver } from './accept-weaver.js';
+import { parseAndValidate } from '../web/index.js';
 
 /**
  * Declaration of custom services - add your own service classes here.
  */
 export type AseRobotAddedServices = {
     validation: {
-        AseRobotValidator: AseRobotValidator
-    }
-    acceptweaver: {
+        AseRobotValidator: AseRobotValidator,
         AseRobotAcceptWeaver: AseRobotAcceptWeaver
     }
 }
@@ -28,9 +28,7 @@ export type AseRobotServices = LangiumServices & AseRobotAddedServices
  */
 export const AseRobotModule: Module<AseRobotServices, PartialLangiumServices & AseRobotAddedServices> = {
     validation: {
-        AseRobotValidator: () => new AseRobotValidator()
-    },
-    acceptweaver: {
+        AseRobotValidator: () => new AseRobotValidator(),
         AseRobotAcceptWeaver: () => new AseRobotAcceptWeaver()
     }
 };
@@ -63,7 +61,18 @@ export function createAseRobotServices(context: DefaultSharedModuleContext): {
         AseRobotGeneratedModule,
         AseRobotModule
     );
+    shared.lsp.ExecuteCommandHandler = new AseRobotCommandHandler();
     shared.ServiceRegistry.register(AseRobot);
     registerValidationChecks(AseRobot);
     return { shared, AseRobot };
+}
+
+class AseRobotCommandHandler extends AbstractExecuteCommandHandler {
+    registerCommands(acceptor: ExecuteCommandAcceptor): void {
+        // accept a single command called 'parseAndGenerate'
+        acceptor('parseAndValidate', args => {
+            // invoke generator on this data, and return the response
+            return parseAndValidate(args[0]);
+        });
+    }
 }

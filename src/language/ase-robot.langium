@@ -153,7 +153,7 @@ NotEqualBool returns NotEqualBool:
 ;
 
 And returns And:
-    '('? (singlevaluebool+=SingleValueBool | comparison+=Comparison )')'? ('and' '('?(singlevaluebool+=SingleValueBool | comparison+=Comparison)')'?)*
+     (singlevaluebool+=SingleValueBool | '('?comparison+=Comparison ')'?) ('and'(singlevaluebool+=SingleValueBool | '('? comparison+=Comparison ')'?))*
 ;
 
 Or returns Or:
