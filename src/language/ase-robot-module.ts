@@ -2,8 +2,8 @@ import type { DefaultSharedModuleContext, ExecuteCommandAcceptor, LangiumService
 import { AbstractExecuteCommandHandler, createDefaultModule, createDefaultSharedModule, inject } from 'langium';
 import { AseRobotGeneratedModule, AseRobotGeneratedSharedModule } from './generated/module.js';
 import { AseRobotValidator, registerValidationChecks } from './ase-robot-validator.js';
-import { AseRobotAcceptWeaver } from './accept-weaver.js';
-import { parseAndValidate } from '../web/index.js';
+import { AseRobotAcceptWeaver, weaveAcceptMethods } from './accept-weaver.js';
+import { interprate, parseAndValidate } from '../web/index.js';
 
 /**
  * Declaration of custom services - add your own service classes here.
@@ -64,6 +64,7 @@ export function createAseRobotServices(context: DefaultSharedModuleContext): {
     shared.lsp.ExecuteCommandHandler = new AseRobotCommandHandler();
     shared.ServiceRegistry.register(AseRobot);
     registerValidationChecks(AseRobot);
+    weaveAcceptMethods(AseRobot);
     return { shared, AseRobot };
 }
 
@@ -73,6 +74,10 @@ class AseRobotCommandHandler extends AbstractExecuteCommandHandler {
         acceptor('parseAndValidate', args => {
             // invoke generator on this data, and return the response
             return parseAndValidate(args[0]);
+        });
+        acceptor('interprate', args => {
+            // invoke generator on this data, and return the response
+            return interprate(args[0]);
         });
     }
 }

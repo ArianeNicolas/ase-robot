@@ -3,6 +3,8 @@ import { URI } from "vscode-uri";
 import { createAseRobotServices } from "../language/ase-robot-module.js";
 import { Program } from "../language/generated/ast.js";
 import chalk from "chalk";
+import { Interpreter } from "../semantics/interpreter.js";
+import * as ClassAST from '../language/visitor.js';
 
 /**
  * Extracts an AST node from a virtual document, represented as a string
@@ -32,5 +34,13 @@ import chalk from "chalk";
 export async function parseAndValidate (aserobot: string): Promise<Object> {
     const services = createAseRobotServices(EmptyFileSystem).AseRobot;
     const model = await extractAstNodeFromString<Program>(aserobot, services);
+    return Promise.resolve(model);
+}
+
+export async function interprate(aserobot: string): Promise<Object>{
+    const services = createAseRobotServices(EmptyFileSystem).AseRobot;
+    const model = await extractAstNodeFromString<Program>(aserobot, services);
+    const interpreter = new Interpreter;
+    (model as unknown as ClassAST.Program).accept(interpreter);
     return Promise.resolve(model);
 }

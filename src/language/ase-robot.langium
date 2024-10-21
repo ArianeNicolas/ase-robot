@@ -125,7 +125,7 @@ FunCall returns FunCall:
 ;
 
 Return returns Return:
-    'return' expression=Expression
+    'return' return=Expression
 ;
 
 AssignVar returns AssignVar:

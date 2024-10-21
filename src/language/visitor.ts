@@ -7,7 +7,6 @@ export interface AseRobotVisitor{
 	visitElseif(node : Elseif) : any;
 	visitFunc(node : Func) : any;
 	visitProgram(node : Program) : any;
-	visitParameter(node : Parameter) : any;
 	visitFunCall(node : FunCall) : any;
 	visitAssignVar(node : AssignVar) : any;
 	visitdeclaVar(node : declaVar) : any;
@@ -289,7 +288,7 @@ export class Return implements ASTInterfaces.Return {
     // simply copy-paste the interface fields as public parameters
     // you can find them in generated/ast.ts
     constructor(public $type: 'Return'){}
-    expression!: Expression;
+    return!: Expression;
     $container?: AstNode | undefined;
     $containerProperty?: string | undefined;
     $containerIndex?: number | undefined;

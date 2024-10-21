@@ -120,7 +120,7 @@ interface SingleValue extends ArithmeticExpression {
 }
 
 interface Return extends Statement {
-	expression: Expression
+	return: Expression
 }
 
 interface AssignVar extends Statement {
