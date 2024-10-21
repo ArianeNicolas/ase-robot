@@ -2,6 +2,12 @@ import { AddExpression, MultExpression } from "../language/generated/ast.js";
 import {And, ArithmeticExpression, ArithmeticOperation, AseRobotVisitor, AssignVar, Back, Bool, BoolCondition, BoolExpression, cm, Comparison, Condition, ConstBool, ConstInt, ControlStructure, declaVar, Else, Elseif, EqualBool, EqualInt, Expression, Front, Func, FunCall, getDistance, getTimestamp, Greater, If, LeftSide, Loop, Lower, mm, Movement, Nbr, NotEqualBool, NotEqualInt, Or, Parameter, Program, Return, RightSide, RobotFunc, RobotLogic, Rotation, setSpeed, SingleValue, SingleValueBool, Statement, Type, Unit, Var, Void} from "../language/visitor.js"
 
 export class Compiler implements AseRobotVisitor {
+    visitCm(node: cm) {
+        throw new Error("Method not implemented.");
+    }
+    visitMm(node: mm) {
+        throw new Error("Method not implemented.");
+    }
     visitOr(node: Or) {
         throw new Error("Method not implemented.");
     }

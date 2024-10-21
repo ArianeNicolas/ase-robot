@@ -120,7 +120,7 @@ export class Func implements ASTInterfaces.Func {
     $containerIndex?: number | undefined;
     $cstNode?: CstNode | undefined;
     $document?: LangiumDocument<AstNode> | undefined;
-    accept(AseRobotVisitor: AseRobotVisitor) : any {AseRobotVisitor.visitFunc(this);}
+    accept(AseRobotVisitor: AseRobotVisitor) : any {}
 }
 
 export class Program implements ASTInterfaces.Program {
@@ -134,7 +134,7 @@ export class Program implements ASTInterfaces.Program {
     $containerIndex?: number | undefined;
     $cstNode?: CstNode | undefined;
     $document?: LangiumDocument<AstNode> | undefined;
-    accept(AseRobotVisitor: AseRobotVisitor) : any {AseRobotVisitor.visitProgram(this);}
+    accept(AseRobotVisitor: AseRobotVisitor) : any {}
 }
 
 export class ControlStructure implements ASTInterfaces.ControlStructure {

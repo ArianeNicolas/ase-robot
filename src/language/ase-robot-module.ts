@@ -77,7 +77,7 @@ class AseRobotCommandHandler extends AbstractExecuteCommandHandler {
         });
         acceptor('interprate', args => {
             // invoke generator on this data, and return the response
-            return interprate(args[0]);
+            return interprate(args[0], args[1]);
         });
     }
 }

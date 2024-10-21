@@ -1,10 +1,18 @@
 import { Statement } from "../language/generated/ast.js";
-import {AddExpression, And, AseRobotVisitor, AssignVar, Back, ConstBool, ConstInt, ControlStructure, declaVar, Else, Elseif, EqualBool, EqualInt, Front, Func, FunCall, getDistance, getTimestamp, Greater, If, LeftSide, Loop, Lower, MultExpression, NotEqualBool, NotEqualInt, Or, Program, Return, RightSide, Rotation, setSpeed, Var} from "../language/visitor.js"
+import { Scene } from "../web/simulator/scene.js";
+import {AddExpression, And, AseRobotVisitor, AssignVar, Back, ConstBool, cm, mm, ConstInt, ControlStructure, declaVar, Else, Elseif, EqualBool, EqualInt, Front, Func, FunCall, getDistance, getTimestamp, Greater, If, LeftSide, Loop, Lower, MultExpression, NotEqualBool, NotEqualInt, Or, Program, Return, RightSide, Rotation, setSpeed, Var} from "../language/visitor.js"
 
 export class Interpreter implements AseRobotVisitor {
+
+    
     
     vars: Map<string, any>[] = [];
     program: Program = new Program("Program");
+    scene: Scene;
+
+    constructor(scene: Scene){
+        this.scene = scene;
+    }
 
     visitMultExpression(node: MultExpression):number {
         let returnValue = node.singlevalue[0].accept(this);
@@ -38,6 +46,7 @@ export class Interpreter implements AseRobotVisitor {
         }
     }
     visitFunc(node: Func):any {
+        console.log("Rentré dans la fonction !");
         this.vars.push(new Map<string, any>());
         node.statement.forEach((statement) => {
             let isReturn = this.isReturn(statement);
@@ -94,7 +103,8 @@ export class Interpreter implements AseRobotVisitor {
         return node.singlevaluebool[0].accept(this) !== node.singlevaluebool[1].accept(this);
     }
     visitgetDistance(node: getDistance) {
-        throw new Error("Method not implemented.");
+        let intersection = this.scene.robot.getRay().intersect(this.scene.entities)
+        return Math.sqrt(Math.pow(intersection!.x - this.scene.robot.pos.x, 2) + Math.pow(intersection!.y - this.scene.robot.pos.y, 2));
     }
     visitgetTimestamp(node: getTimestamp) {
         throw new Error("Method not implemented.");
@@ -135,7 +145,7 @@ export class Interpreter implements AseRobotVisitor {
         return null
     }
     visitRotation(node: Rotation) {
-        throw new Error("Method not implemented.");
+        this.scene.robot.turn(node.angle.accept(this));
     }
     visitEqualInt(node: EqualInt): boolean {
         return node.arithmeticexpression[0].accept(this) === node.arithmeticexpression[1].accept(this);
@@ -159,19 +169,46 @@ export class Interpreter implements AseRobotVisitor {
         return node.integerValue;
     }
     visitBack(node: Back) {
-        throw new Error("Method not implemented.");
+        if(node.unit1.accept(this) === "cm"){
+            this.scene.robot.move(-node.expression.accept(this));
+        }else{
+            this.scene.robot.move(-node.expression.accept(this)/10);
+        }
+            
     }
     visitFront(node: Front) {
-        throw new Error("Method not implemented.");
+        if(node.unit1.accept(this) === "cm"){
+            this.scene.robot.move(node.expression.accept(this));
+        }else{
+            this.scene.robot.move(node.expression.accept(this)/10);
+        }
     }
     visitLeftSide(node: LeftSide) {
-        throw new Error("Method not implemented.");
+        if(node.unit1.accept(this) === "cm"){
+            this.scene.robot.side(node.expression.accept(this));
+        }else{
+            this.scene.robot.move(node.expression.accept(this)/10);
+        }
     }
     visitRightSide(node: RightSide) {
-        throw new Error("Method not implemented.");
+        if(node.unit1.accept(this) === "cm"){
+            this.scene.robot.side(-node.expression.accept(this));
+        }else{
+            this.scene.robot.move(-node.expression.accept(this)/10);
+        }
     }
+
+    visitCm(node: cm): string {
+        return "cm";
+    }
+
+    visitMm(node: mm): string {
+        return "mm";
+    }
+
     visitProgram(node: Program) {
         this.program = node;
+        console.log("Rentré dans le programme !");
         node.Func.forEach((func) => func.accept(this));
     }
 

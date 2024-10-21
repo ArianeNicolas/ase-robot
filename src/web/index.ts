@@ -1,10 +1,10 @@
 import { AstNode, EmptyFileSystem, LangiumServices } from "langium";
 import { URI } from "vscode-uri";
 import { createAseRobotServices } from "../language/ase-robot-module.js";
-import { Program } from "../language/generated/ast.js";
+import { Program } from "../language/visitor.js"
 import chalk from "chalk";
 import { Interpreter } from "../semantics/interpreter.js";
-import * as ClassAST from '../language/visitor.js';
+import { Scene } from "./simulator/scene.js";
 
 /**
  * Extracts an AST node from a virtual document, represented as a string
@@ -37,10 +37,11 @@ export async function parseAndValidate (aserobot: string): Promise<Object> {
     return Promise.resolve(model);
 }
 
-export async function interprate(aserobot: string): Promise<Object>{
+export async function interprate(aserobot: string, scene: Scene): Promise<Object>{
     const services = createAseRobotServices(EmptyFileSystem).AseRobot;
     const model = await extractAstNodeFromString<Program>(aserobot, services);
-    const interpreter = new Interpreter;
-    (model as unknown as ClassAST.Program).accept(interpreter);
+    const interpreter = new Interpreter(scene);
+    console.log("before accept");
+    model.accept(interpreter);
     return Promise.resolve(model);
 }

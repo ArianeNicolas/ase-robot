@@ -135,7 +135,7 @@ const typecheck = (async () => {
 const execute = (async () => {
     console.info('running current code...');
     const value = client.editor.getValue();
-    const interprate = await vscode.commands.executeCommand('interprate', value);
+    const interprate = await vscode.commands.executeCommand('interprate', value, window.scene);
 });
 
 window.parseAndValidate = parseAndValidate;

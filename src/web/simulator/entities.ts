@@ -26,19 +26,33 @@ export class Robot implements Entities{
     }
   
     intersect(ray :Ray) : Vector[] {
-        return [] as Vector[];
+        const poi = ray.getPoiFinder()(this.pos, this.size);
+        return poi ? ([poi] as Vector[]) : ([] as Vector[]);
     }
 
     turn(angle:number) : void {
-        // To implement
+        this.rad += (angle * Math.PI) / 180;
+        const finalTimestamp = new Timestamp(this.scene.time, this);
+        this.scene.timestamps.push(finalTimestamp);
     }
 
     move(dist:number) : void {
-        // To implement
+        const direction = Vector.fromAngle(this.rad, dist).normalize();
+        this.pos = this.pos.plus(direction.scale(dist));
+        this.scene.time += dist / this.speed;
+        const finalTimestamp = new Timestamp(this.scene.time, this);
+        this.scene.timestamps.push(finalTimestamp);
     }
 
     side(dist:number) : void {
-        // To implement
+        const direction = Vector.fromAngle(
+            this.rad + Math.PI / 2,
+            dist
+        ).normalize();
+        this.pos = this.pos.plus(direction.scale(dist));
+        this.scene.time += dist / this.speed;
+        const finalTimestamp = new Timestamp(this.scene.time, this);
+        this.scene.timestamps.push(finalTimestamp);
     }
 
     getRay(){

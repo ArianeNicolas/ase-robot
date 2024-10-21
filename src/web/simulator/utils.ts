@@ -1,6 +1,8 @@
 import { Entities } from "./entities.js"
 
 export class Vector {
+    
+    
     x:number;
     y:number;
 
@@ -32,6 +34,10 @@ export class Vector {
     projX() : Vector{
         return new Vector(this.x, 0);
     }
+
+    normalize(): Vector {
+        return this.scale(1 / this.norm());
+      }
 
     projY() : Vector{
         return new Vector(0, this.y);
