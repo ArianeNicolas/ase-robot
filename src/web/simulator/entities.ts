@@ -37,11 +37,21 @@ export class Robot implements Entities{
     }
 
     move(dist:number) : void {
-        const direction = Vector.fromAngle(this.rad, dist).normalize();
-        this.pos = this.pos.plus(direction.scale(dist));
-        this.scene.time += dist / this.speed;
-        const finalTimestamp = new Timestamp(this.scene.time, this);
-        this.scene.timestamps.push(finalTimestamp);
+        const dx = Math.cos(this.rad) * dist;
+        const dy = Math.sin(this.rad) * dist;
+        this.pos.x += dx;
+        this.pos.y += dy;
+        const timeElapsed = dist / this.speed*1000;
+        this.scene.time += timeElapsed;
+        this.scene.timestamps.push(new Timestamp(this.scene.time, this));
+        /*const direction = Vector.fromAngle(this.rad, dist).normalize();
+        let time = (dist/this.speed);
+        for(let i = 0; i < time; i++){
+            this.pos = this.pos.plus(direction.scale(dist));
+            this.scene.time += 1;
+            const finalTimestamp = new Timestamp(this.scene.time, this);
+            this.scene.timestamps.push(finalTimestamp);
+        }*/
     }
 
     side(dist:number) : void {

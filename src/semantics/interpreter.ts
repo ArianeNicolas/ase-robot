@@ -17,9 +17,11 @@ export class Interpreter implements AseRobotVisitor {
     visitMultExpression(node: MultExpression):number {
         let returnValue = node.singlevalue[0].accept(this);
         for(let i = 1; i < node.singlevalue.length; i++){
-            if(node.op[i] === '*'){
-                returnValue = returnValue * node.singlevalue[i].accept(this);
-            }else if(node.op === '/'){
+            if(node.op[i-1] === '*'){
+                let mult = node.singlevalue[i].accept(this);
+                console.log("* "+mult);
+                returnValue = returnValue * mult;
+            }else if(node.op[i-1] === '/'){
                 returnValue = returnValue / node.singlevalue[i].accept(this);
             }
         }
@@ -28,9 +30,11 @@ export class Interpreter implements AseRobotVisitor {
     visitAddExpression(node: AddExpression):number {
         let returnValue = node.multexpression[0].accept(this);
         for(let i = 1; i < node.multexpression.length; i++){
-            if(node.op[i] === '+'){
-                returnValue = returnValue + node.multexpression[i].accept(this);
-            }else if(node.op === '-'){
+            if(node.op[i-1] === '+'){
+                let add = node.multexpression[i].accept(this);
+                console.log("+ "+add);
+                returnValue = returnValue + add;
+            }else if(node.op[i-1] === '-'){
                 returnValue = returnValue - node.multexpression[i].accept(this);
             }
         }
@@ -46,37 +50,45 @@ export class Interpreter implements AseRobotVisitor {
         }
     }
     visitFunc(node: Func):any {
-        console.log("Rentré dans la fonction !");
-        this.vars.push(new Map<string, any>());
-        node.statement.forEach((statement) => {
-            let isReturn = this.isReturn(statement);
-            let isControleStructure = this.isControleStructure(statement);
-            if(isReturn || (isControleStructure && statement.accept(this) != null)){
-                let returnValue = statement.accept(this)
-                this.vars.pop();
-                console.log(node.name, " : ", returnValue);
-                return returnValue;
-            }
-            else {
-                statement.accept(this);
-            }
-        });
+        console.log("Rentré dans la fonction "+node.name);
+       
+            node.statement.forEach((statement) => {
+                let isReturn = this.isReturn(statement);
+                let isControleStructure = this.isControleStructure(statement);
+                let accept = statement.accept(this);
+                if(isReturn || (isControleStructure && accept != null)){
+                    console.log("return !");
+                    let returnValue = accept;
+                    this.vars.pop();
+                    console.log(node.name, " : ", returnValue);
+                    return returnValue;
+                }
+            });
+       
     }
     visitFunCall(node: FunCall): any {
         this.program.Func.forEach(f => {
             if(f.name == node.callName){
-                this.vars.push(new Map<string,any>());
+                let map = new Map<string, any>();
                 for(let i = 0; i<node.parameters.length; i++) {
-                    this.vars[this.vars.length-1].set(f.parameter[i].name, node.parameters[i].accept(this));
+                    let value = node.parameters[i].accept(this);
+                    console.log(f.parameter[i].name + " = "+ value);
+                    map.set(f.parameter[i].name, value);
                 }
-                return f.accept(this);
+                this.vars.push(map);
+                let returnValue = f.accept(this);
+                this.vars.pop();
+                return returnValue;
             }
         });
+        
     }
     visitAssignVar(node: AssignVar) {
+        console.log(node.var_to_assign.name + " = "+ node.expression.accept(this));
         this.vars[this.vars.length-1].set(node.var_to_assign.name, node.expression.accept(this));
     }
     visitdeclaVar(node: declaVar) {
+        console.log("let " + node.declaName + " : "+ node.expression.accept(this));
         this.vars[this.vars.length-1].set(node.declaName, node.expression.accept(this));
     }
     visitReturn(node: Return): any {
@@ -107,10 +119,16 @@ export class Interpreter implements AseRobotVisitor {
         return Math.sqrt(Math.pow(intersection!.x - this.scene.robot.pos.x, 2) + Math.pow(intersection!.y - this.scene.robot.pos.y, 2));
     }
     visitgetTimestamp(node: getTimestamp) {
-        throw new Error("Method not implemented.");
+        return this.scene.timestamps[this.scene.timestamps.length-1];
     }
     visitsetSpeed(node: setSpeed) {
-        throw new Error("Method not implemented.");
+        let speed = node.speed.accept(this);
+        console.log("Speed : "+speed);
+        if(node.unit.accept(this) === "cm"){
+            this.scene.robot.speed = speed*10;
+        }else{
+            this.scene.robot.speed =speed;
+        }
     }
     visitIf(node: If): any {
         if(node.condition.accept(this)){
@@ -129,8 +147,13 @@ export class Interpreter implements AseRobotVisitor {
         return null
     }
     visitLoop(node: Loop): any {
+        console.log("Get in Loop !");
+       
+        let i = 0;
         while(node.condition.accept(this)){
+            console.log("loop"+i);
             node.statement.forEach((statement) => {
+            
                 let isReturn = this.isReturn(statement);
                 if(isReturn){
                     let returnValue = statement.accept(this)
@@ -140,6 +163,7 @@ export class Interpreter implements AseRobotVisitor {
                 else {
                     statement.accept(this);
                 }
+                i++;
             });
         }
         return null
@@ -154,9 +178,11 @@ export class Interpreter implements AseRobotVisitor {
         return node.arithmeticexpression[0].accept(this) !== node.arithmeticexpression[1].accept(this);
     }
     visitGreater(node: Greater): boolean {
+        console.log(node.arithmeticexpression[0].accept(this) + " > " + node.arithmeticexpression[1].accept(this));
         return node.arithmeticexpression[0].accept(this) > node.arithmeticexpression[1].accept(this);
     }
     visitLower(node: Lower): boolean {
+        console.log(node.arithmeticexpression[0].accept(this) + " < " + node.arithmeticexpression[1].accept(this));
         return node.arithmeticexpression[0].accept(this) < node.arithmeticexpression[1].accept(this);
     }
     visitConstBool(node: ConstBool): boolean {
@@ -209,7 +235,12 @@ export class Interpreter implements AseRobotVisitor {
     visitProgram(node: Program) {
         this.program = node;
         console.log("Rentré dans le programme !");
-        node.Func.forEach((func) => func.accept(this));
+        node.Func.forEach((func) => {
+            if(func.name == "entry"){
+                this.vars.push(new Map<string, any>());
+                func.accept(this);
+                this.vars.pop();
+            }});
     }
 
     isReturn(object: Statement): object is Return {

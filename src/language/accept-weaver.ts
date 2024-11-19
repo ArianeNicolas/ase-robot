@@ -10,7 +10,6 @@ import type { AseRobotServices } from "./ase-robot-module.js";
  * TODO : Call this function in the language module.ts file (see registerValidationChecks(...);)
  */
 export function weaveAcceptMethods(services: AseRobotServices) {
-  console.log("weave Accept Methods");
   const registry = services.validation.ValidationRegistry;
   const weaver = services.validation.AseRobotAcceptWeaver;
   registry.register(weaver.checks, weaver);
@@ -100,18 +99,15 @@ export class AseRobotAcceptWeaver {
   }
 
   weaveFunc(node: InterfaceAST.Func): void {
-    console.log("weaveFunction");
     (<any>node).accept = (AseRobotVisitor: AseRobotVisitor) => {
       return AseRobotVisitor.visitFunc(node as unknown as ClassAST.Func);
     };
   }
 
   weaveProgram(node: InterfaceAST.Program): void {
-    console.log("weaveProgram");
     (<any>node).accept = (AseRobotVisitor: AseRobotVisitor) => {
       return AseRobotVisitor.visitProgram(node as unknown as ClassAST.Program);
     };
-    console.log("accept interface Program !");
   }
 
   weaveFunCall(node: InterfaceAST.FunCall): void {

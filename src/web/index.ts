@@ -4,7 +4,7 @@ import { createAseRobotServices } from "../language/ase-robot-module.js";
 import { Program } from "../language/visitor.js";
 import chalk from "chalk";
 import { Interpreter } from "../semantics/interpreter.js";
-import { Scene } from "./simulator/scene.js";
+import { Scene, BaseScene } from "./simulator/scene.js";
 
 /**
  * Extracts an AST node from a virtual document, represented as a string
@@ -46,9 +46,11 @@ export async function parseAndValidate(aserobot: string): Promise<Object> {
   return Promise.resolve(model);
 }
 
-export async function interprate(aserobot: string, scene: Scene) {
+export async function interprate(aserobot: string, scene: Scene): Promise<Scene> {
   const services = createAseRobotServices(EmptyFileSystem).AseRobot;
   const model = await extractAstNodeFromString<Program>(aserobot, services);
+  scene = new BaseScene();
   const interpreter = new Interpreter(scene);
   model.accept(interpreter);
+  return scene;
 }
