@@ -25,7 +25,7 @@ let code = `let void entry () {
     var number count = 0
     loop count < 5
     {
-        setSpeed(500 * (count + 1) in mm)
+        setSpeed(50 * (count + 1) in mm)
         count = count + 1
         square(count)
     }

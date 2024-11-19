@@ -90,6 +90,11 @@ export class AseRobotValidator {
                         exists = true;
                     }
                 }
+                for(const p of func.parameter){
+                    if(s.var_to_assign.name === p.name){
+                        exists = true;
+                    }
+                }
                 if(!exists){
                     accept('error','Variable doesnt exist', {node: s, property: 'var_to_assign'});
                 }

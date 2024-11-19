@@ -31,23 +31,23 @@ export class Robot implements Entities{
     }
 
     turn(angle:number) : void {
-        this.rad += (angle * Math.PI) / 180;
+        this.rad += (angle * Math.PI) / 180;   
+        this.scene.time += 1;
         const finalTimestamp = new Timestamp(this.scene.time, this);
         this.scene.timestamps.push(finalTimestamp);
+        console.log("Turn : "+this.pos.x+" "+this.pos.y);
     }
 
     move(dist:number) : void {
-        const dx = Math.cos(this.rad) * dist;
-        const dy = Math.sin(this.rad) * dist;
-        this.pos.x += dx;
-        this.pos.y += dy;
-        const timeElapsed = dist / this.speed*1000;
-        this.scene.time += timeElapsed;
-        this.scene.timestamps.push(new Timestamp(this.scene.time, this));
+        const direction = Vector.fromAngle(this.rad, Math.abs(dist)).normalize();
+        this.pos = this.pos.plus(direction.scale(dist));
+        this.scene.time += Math.abs(dist) / this.speed;
+        const finalTimestamp = new Timestamp(this.scene.time, this);
+        this.scene.timestamps.push(finalTimestamp);
         /*const direction = Vector.fromAngle(this.rad, dist).normalize();
         let time = (dist/this.speed);
         for(let i = 0; i < time; i++){
-            this.pos = this.pos.plus(direction.scale(dist));
+            this.pos = this.pos.plus(direction.scale(1/time));
             this.scene.time += 1;
             const finalTimestamp = new Timestamp(this.scene.time, this);
             this.scene.timestamps.push(finalTimestamp);
@@ -57,10 +57,10 @@ export class Robot implements Entities{
     side(dist:number) : void {
         const direction = Vector.fromAngle(
             this.rad + Math.PI / 2,
-            dist
+            Math.abs(dist)
         ).normalize();
         this.pos = this.pos.plus(direction.scale(dist));
-        this.scene.time += dist / this.speed;
+        this.scene.time += Math.abs(dist) / this.speed;
         const finalTimestamp = new Timestamp(this.scene.time, this);
         this.scene.timestamps.push(finalTimestamp);
     }

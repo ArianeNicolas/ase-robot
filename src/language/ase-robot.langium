@@ -133,7 +133,7 @@ AssignVar returns AssignVar:
 ;
 
 LeftSide returns LeftSide:
-    'LeftSide' expression=ArithmeticExpression unit1=Unit  
+    'Left' expression=ArithmeticExpression unit1=Unit  
 ;
 
 Lower returns Lower:
