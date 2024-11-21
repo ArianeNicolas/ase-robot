@@ -1,17 +1,25 @@
-html,body {
+html, body {
     background: rgb(33,33,33);
-    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-family: 'Inter', Arial, sans-serif;
     color: white;
     margin: 0;
+    transform: scale(0.95);
 }
+
 h1 {
     text-align: center;
+    font-size: 3rem; /* Increased size */
+    margin: 0rem 0;
+    color: #ff6f61; /* Vibrant color for the title */
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4); /* Subtle shadow effect */
 }
+
 footer {
     text-align: center;
     color: #444;
     font-size: 1.2rem;
-    margin-bottom: 0.5rem;
 }
 
 /* for monaco */
@@ -34,30 +42,38 @@ canvas {
 #buttons {
     display: flex;
     justify-content: center;
+    gap: 15px; /* Spaced buttons slightly further apart */
 }
 
 .build {
-    display: inline;
+    display: inline-block;
     margin: 8px 10px;
-    width: 300px;
-    height: 30px;
-    background: none;
-    border: 2px #fff solid;
-    color: #fff;
-    transition: 0.3s;
-    font-size: 1.2rem;
-    border-radius: 4px;
-}
-.build:hover {
-    border-color: #6cf;
-    color: #6cf;
+    padding: 0.8rem 1.8rem; /* Adjusted padding for better click area */
+    font-size: 1.2rem; /* Larger button text */
+    font-weight: bold;
+    text-transform: uppercase;
+    border: 2px solid #ff6f61; /* Updated border color */
+    border-radius: 8px; /* Rounded corners */
+    color: #ff6f61; /* Updated text color */
+    background: transparent;
+    transition: all 0.3s ease;
     cursor: pointer;
+    box-shadow: 0 4px 8px rgba(255, 111, 97, 0.2); /* Soft glow effect */
 }
-.build:active {
-    color: #fff;
-    border-color: #fff;
-} 
 
+.build:hover {
+    background: #ff6f61; /* Brighter hover background */
+    color: #ffffff;
+    transform: scale(1.08); /* Slightly larger on hover */
+    box-shadow: 0 6px 12px rgba(255, 111, 97, 0.4); /* Enhance glow on hover */
+}
+
+.build:active {
+    transform: scale(0.95); /* Reduce size when active */
+    box-shadow: 0 2px 6px rgba(255, 111, 97, 0.3); /* Softer glow */
+}
+
+/* Page wrapper and layout */
 #page-wrapper {
     display: flex;
     max-width: 2000px;
@@ -66,6 +82,7 @@ canvas {
     min-height: 80vh;
     justify-content: center;
 }
+
 #page-wrapper .editor {
     display: flex;
     width: 45%;
@@ -106,8 +123,13 @@ canvas {
     color: white;
 }
 
-#errorModal .modal-header {background-color: #880000;}
-#validModal .modal-header {background-color: #008800;}
+#errorModal .modal-header {
+    background-color: #880000;
+}
+
+#validModal .modal-header {
+    background-color: #008800;
+}
 
 /* Modal Body */
 .modal-body {
@@ -132,15 +154,15 @@ canvas {
     color: black;
     text-decoration: none;
     cursor: pointer;
-} 
+}
 
+/* Responsive layout adjustments */
 @media(max-width: 1000px) {
     #page-wrapper {
         display: block;
     }
     #page-wrapper .editor,
-    #page-wrapper .simulator
-    {
+    #page-wrapper .simulator {
         display: block;
         width: auto;
     }
