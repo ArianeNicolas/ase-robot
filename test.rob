@@ -1,8 +1,19 @@
 let void entry () {
+    setSpeed(100 in mm)
     var number count = 0
-    count = square(count)
+    loop count < 5 {
+        count = count + 1
+        square()
+    }
 }
 
-let void square(number factor){
-    return factor*factor
+let void square() {
+    Forward 30 in cm
+    Clock 90
+    Forward 90 in cm
+    Clock 90
+    Forward 30 in cm
+    Clock 90
+    Forward 90 in cm
+    Clock 90
 }
