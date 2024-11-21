@@ -21,16 +21,13 @@ editorConfig.setMainLanguageId("ase-robot");
 
 editorConfig.setMonarchTokensProvider(monarchSyntax);
 
-let code = `let void entry () {
-    var number count = 20
-    setSpeed(50 in mm)
-    count = square(count)
-    
+let code = `let number entry () {
+    var number count = square(2)
+    return count
 }
-
-let void square(number factor){
-    return factor * factor
-}`;
+    
+let number square(number fac){
+    return fac}`;
 
 editorConfig.setMainCode(code);
 
@@ -124,7 +121,11 @@ const parseAndValidate = async () => {
 const typecheck = async () => {
   console.info("typechecking current code...");
 
-  // BONUS : Implement new semantics for typechecking
+  const value = client.editor.getValue();
+  const typecheckResult = await vscode.commands.executeCommand(
+    "typeCheck",
+    value,
+  );
 
   if (errors.length > 0) {
     const modal = document.getElementById("errorModal");

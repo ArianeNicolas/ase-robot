@@ -1,10 +1,8 @@
 import { Statement } from "../language/generated/ast.js";
 import { Scene } from "../web/simulator/scene.js";
-import {AddExpression, And, AseRobotVisitor, AssignVar, Back, ConstBool, cm, mm, ConstInt, ControlStructure, declaVar, Else, Elseif, EqualBool, EqualInt, Front, Func, FunCall, getDistance, getTimestamp, Greater, If, LeftSide, Loop, Lower, MultExpression, NotEqualBool, NotEqualInt, Or, Program, Return, RightSide, Rotation, setSpeed, Var} from "../language/visitor.js"
+import {AddExpression, And, AseRobotVisitor, AssignVar, Back, ConstBool, cm, mm, ConstInt, ControlStructure, declaVar, Else, Elseif, EqualBool, EqualInt, Front, Func, FunCall, getDistance, getTimestamp, Greater, If, LeftSide, Loop, Lower, MultExpression, NotEqualBool, NotEqualInt, Or, Program, Return, RightSide, Rotation, setSpeed, Var, Parameter} from "../language/visitor.js"
 
 export class Interpreter implements AseRobotVisitor {
-
-    
     
     vars: Map<string, any>[] = [];
     program: Program = new Program("Program");
@@ -13,8 +11,11 @@ export class Interpreter implements AseRobotVisitor {
     constructor(scene: Scene){
         this.scene = scene;
     }
+    visitParam(node: Parameter) {
+    }
 
     visitMultExpression(node: MultExpression):number {
+        console.log(node.singlevalue[0].$type);
         let returnValue = node.singlevalue[0].accept(this);
         for(let i = 1; i < node.singlevalue.length; i++){
             if(node.op[i-1] === '*'){
@@ -171,7 +172,6 @@ export class Interpreter implements AseRobotVisitor {
         return node.arithmeticexpression[0].accept(this) > node.arithmeticexpression[1].accept(this);
     }
     visitLower(node: Lower): boolean {
-        console.log(node.arithmeticexpression[0].accept(this) + " < " + node.arithmeticexpression[1].accept(this));
         return node.arithmeticexpression[0].accept(this) < node.arithmeticexpression[1].accept(this);
     }
     visitConstBool(node: ConstBool): boolean {

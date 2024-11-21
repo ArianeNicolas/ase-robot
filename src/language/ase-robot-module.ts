@@ -3,7 +3,7 @@ import { AbstractExecuteCommandHandler, createDefaultModule, createDefaultShared
 import { AseRobotGeneratedModule, AseRobotGeneratedSharedModule } from './generated/module.js';
 import { AseRobotValidator, registerValidationChecks } from './ase-robot-validator.js';
 import { AseRobotAcceptWeaver, weaveAcceptMethods } from './accept-weaver.js';
-import { interprate, parseAndValidate } from '../web/index.js';
+import { interprate, parseAndValidate, typeCheck } from '../web/index.js';
 
 /**
  * Declaration of custom services - add your own service classes here.
@@ -79,5 +79,11 @@ class AseRobotCommandHandler extends AbstractExecuteCommandHandler {
             // invoke generator on this data, and return the response
             return interprate(args[0], args[1]);
         });
+
+        acceptor('typeCheck', args => {
+            // invoke generator on this data, and return the response
+            return typeCheck(args[0]);
+        });
+
     }
 }

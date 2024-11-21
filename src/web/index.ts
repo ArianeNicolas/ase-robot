@@ -5,6 +5,7 @@ import { Program } from "../language/visitor.js";
 import chalk from "chalk";
 import { Interpreter } from "../semantics/interpreter.js";
 import { Scene, BaseScene } from "./simulator/scene.js";
+import { typeChecking } from "../semantics/typeChecking.js";
 
 /**
  * Extracts an AST node from a virtual document, represented as a string
@@ -43,6 +44,14 @@ async function extractAstNodeFromString<T extends AstNode>(
 export async function parseAndValidate(aserobot: string): Promise<Object> {
   const services = createAseRobotServices(EmptyFileSystem).AseRobot;
   const model = await extractAstNodeFromString<Program>(aserobot, services);
+  return Promise.resolve(model);
+}
+
+export async function typeCheck(aserobot: string): Promise<Object> {
+  const services = createAseRobotServices(EmptyFileSystem).AseRobot;
+  const model = await extractAstNodeFromString<Program>(aserobot, services);
+  const typeChecker = new typeChecking();
+  model.accept(typeChecker);
   return Promise.resolve(model);
 }
 

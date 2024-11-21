@@ -1,42 +1,52 @@
 import { Statement, Type } from "../language/generated/ast.js";
-import { Scene } from "../web/simulator/scene.js";
-import {AddExpression, And, AseRobotVisitor, AssignVar, Back, ConstBool, cm, mm, ConstInt, ControlStructure, declaVar, Else, Elseif, EqualBool, EqualInt, Front, Func, FunCall, getDistance, getTimestamp, Greater, If, LeftSide, Loop, Lower, MultExpression, NotEqualBool, NotEqualInt, Or, Program, Return, RightSide, Rotation, setSpeed, Var} from "../language/visitor.js"
+import {AddExpression, And, AseRobotVisitor, AssignVar, Back, ConstBool, cm, mm, ConstInt, ControlStructure, declaVar, Else, Elseif, EqualBool, EqualInt, Front, Func, FunCall, getDistance, getTimestamp, Greater, If, LeftSide, Loop, Lower, MultExpression, NotEqualBool, NotEqualInt, Or, Program, Return, RightSide, Rotation, setSpeed, Var, Parameter} from "../language/visitor.js"
 
 export class typeChecking implements AseRobotVisitor {
-
+    visitParam(node: Parameter) {
+    }
+    
     vars: Map<string, any>[] = [];
     funcs: Map<string, [Type, Type[]]> = new Map<string, [Type, Type[]]>();
     program: Program = new Program("Program");
 
     visitElse(node: Else) {
-        node.statement.forEach((statement) => statement.accept(this))
+        node.statement.forEach((statement) => statement.accept(this));
     }
+
     visitElseif(node: Elseif) {
-        if(node.condition.accept(this)){
+        if (node.condition.accept(this)) {
             node.statement.forEach((statement) => statement.accept(this));
         }
     }
+
     visitFunc(node: Func) {
         for (let statement of node.statement) {
             const isReturn = this.isReturn(statement);
             const isControlStructure = this.isControleStructure(statement);
             const result = statement.accept(this);
-    
             if (isReturn || (isControlStructure && result != null)) {
-                if(result.type != this.funcs.get(node.name)?.[0]){
+                if (result.type != this.normalizeType(this.funcs.get(node.name)?.[0].$type)) {
                     throw new Error("Return type does not match function type");
                 }
             }
         }
     }
+
     visitProgram(node: Program) {
         this.program = node;
+        let isEntry = false;
+
         node.Func.forEach((func) => {
-            this.funcs.set(func.name, [func.type, []]);
-            func.parameter.forEach((param) => {
-                this.funcs.get(func.name)?.[1].push(param.type);
-            });
+            this.funcs.set(func.name, [func.type, func.parameter.map((param) => param.type)]);
+            if (func.name === "entry") {
+                isEntry = true;
+            }
         });
+
+        if (!isEntry) {
+            throw new Error("No entry function found");
+        }
+
         node.Func.forEach((func) => {
             this.vars.push(new Map<string, any>());
             func.accept(this);
@@ -45,110 +55,393 @@ export class typeChecking implements AseRobotVisitor {
     }
 
     visitFunCall(node: FunCall) {
-        this.program.Func.forEach(f => {
-            if(f.name == node.callName){
-                let map = new Map<string, any>();
-                for(let i = 0; i<node.parameters.length; i++) {
-                    let value = node.parameters[i].accept(this);
-                    if(value.type != this.funcs.get(f.name)?.[1][i]){
-                        throw new Error("Parameter type does not match function type");
-                    }
-                    map.set(f.parameter[i].name, value);
-                }
-                this.vars.push(map);
-                let returnValue = f.accept(this);
-                if(returnValue.type != this.funcs.get(f.name)?.[0]){
-                    throw new Error("Return type does not match function type");
-                }
-                this.vars.pop();
-                return returnValue;
+        const func = this.funcs.get(node.callName);
+
+        if (!func) throw new Error(`Function ${node.callName} not found`);
+
+        const [returnType, paramTypes] = func;
+
+        if (node.parameters.length !== paramTypes.length) {
+            throw new Error(`Parameter count mismatch for function ${node.callName}`);
+        }
+
+        const paramValues = node.parameters.map((param, i) => {
+            const value = param.accept(this);
+            if (value.type !== this.normalizeType(paramTypes[i].$type)) {
+                throw new Error(`Parameter type mismatch in function ${node.callName}`);
             }
+            return value;
         });
-        throw new Error("Function not found");
+
+        const localScope = new Map<string, any>(
+            paramValues.map((value, i) => [this.program.Func.find((f) => f.name === node.callName)?.parameter[i].name!, value])
+        );
+
+        this.vars.push(localScope);
+        const returnValue = this.funcs.get(node.callName)?.[0].$type
+        this.vars.pop();
+
+        if (this.normalizeType(returnValue) !== this.normalizeType(returnType.$type)) {
+            throw new Error(`Return type mismatch for function ${node.callName}`);
+        }
+
+        return returnValue;
     }
+
     visitAssignVar(node: AssignVar) {
-        throw new Error("Method not implemented.");
+        const value = node.expression.accept(this);
+        const varType = this.lookupVar(node.var_to_assign.name).type;
+
+        if (this.normalizeType(value.type) !== this.normalizeType(varType)) {
+            throw new Error(`Type mismatch in assignment to ${node.var_to_assign.name}`);
+        }
+
+        this.updateVar(node.var_to_assign.name, value);
     }
+
     visitdeclaVar(node: declaVar) {
-        throw new Error("Method not implemented.");
+        if (this.vars.length === 0) throw new Error("Variable declaration outside any scope");
+
+        if (this.vars[this.vars.length - 1].has(node.declaName)) {
+            throw new Error(`Variable ${node.declaName} already declared`);
+        }
+        const value = node.expression.accept(this);
+        if (value.type !== this.normalizeType(node.type.$type)) {
+            throw new Error(`Type mismatch in declaration of ${node.declaName}`);
+        }
+
+        this.vars[this.vars.length - 1].set(node.declaName, value);
     }
+
     visitReturn(node: Return) {
-        throw new Error("Method not implemented.");
+        return node.return?.accept(this);
     }
-    visitAnd(node: And) {
-        throw new Error("Method not implemented.");
-    }
-    visitOr(node: Or) {
-        throw new Error("Method not implemented.");
-    }
-    visitEqualBool(node: EqualBool) {
-        throw new Error("Method not implemented.");
-    }
-    visitNotEqualBool(node: NotEqualBool) {
-        throw new Error("Method not implemented.");
-    }
-    visitgetDistance(node: getDistance) {
-        throw new Error("Method not implemented.");
-    }
-    visitgetTimestamp(node: getTimestamp) {
-        throw new Error("Method not implemented.");
-    }
-    visitsetSpeed(node: setSpeed) {
-        throw new Error("Method not implemented.");
-    }
+
     visitIf(node: If) {
-        throw new Error("Method not implemented.");
+        const condition = node.condition.accept(this);
+        if (condition.type !== "bool") {
+            throw new Error("Condition in if statement must be a boolean");
+        }
+    
+        if (condition.value) {
+            node.statement.forEach((stmt) => stmt.accept(this));
+        }
+
+        return null;
     }
+    
+
     visitLoop(node: Loop) {
-        throw new Error("Method not implemented.");
+        const condition = node.condition.accept(this);
+        if (condition.type !== "bool") {
+            throw new Error("Condition in loop statement must be a boolean");
+        }
+
+        node.statement.forEach((stmt) => stmt.accept(this));
     }
-    visitRotation(node: Rotation) {
-        throw new Error("Method not implemented.");
-    }
-    visitEqualInt(node: EqualInt) {
-        throw new Error("Method not implemented.");
-    }
-    visitNotEqualInt(node: NotEqualInt) {
-        throw new Error("Method not implemented.");
-    }
-    visitGreater(node: Greater) {
-        throw new Error("Method not implemented.");
-    }
-    visitLower(node: Lower) {
-        throw new Error("Method not implemented.");
-    }
-    visitConstBool(node: ConstBool) {
-        throw new Error("Method not implemented.");
-    }
+
     visitVar(node: Var) {
-        throw new Error("Method not implemented.");
+        return this.lookupVar(node.name);
     }
-    visitMultExpression(node: MultExpression) {
-        throw new Error("Method not implemented.");
-    }
-    visitAddExpression(node: AddExpression) {
-        throw new Error("Method not implemented.");
-    }
-    visitMm(node: mm) {
-        throw new Error("Method not implemented.");
-    }
-    visitCm(node: cm) {
-        throw new Error("Method not implemented.");
-    }
+
     visitConstInt(node: ConstInt) {
-        throw new Error("Method not implemented.");
+        return { type: "int", value: node.integerValue };
     }
+
+    visitConstBool(node: ConstBool) {
+        return { type: "bool", value: node.BoolValue };
+    }
+
+    visitAddExpression(node: AddExpression) {
+        let returnValue = node.multexpression[0].accept(this);
+    
+        for (let i = 1; i < node.multexpression.length; i++) {
+            const current = node.multexpression[i].accept(this);
+    
+            if (node.op[i - 1] === "+") {
+                if (current.type !== "int") {
+                    throw new Error("Addition requires integer operands");
+                }
+                returnValue.value += current.value;
+            } else if (node.op[i - 1] === "-") {
+                if (current.type !== "int") {
+                    throw new Error("Soustraction requires integer operands");
+                }
+                returnValue.value -= current.value;
+            }
+        }
+    
+        return returnValue;
+    }
+
+    visitMultExpression(node: MultExpression) {
+
+        let returnValue = node.singlevalue[0].accept(this);
+    
+        for (let i = 1; i < node.singlevalue.length; i++) {
+            const current = node.singlevalue[i].accept(this);   
+            if (node.op[i - 1] === "*") {
+                if (current.type !== "int") {
+                    throw new Error("Multiplication requires integer operands");
+                }
+                returnValue.value *= current.value;
+            } else if (node.op[i - 1] === "/") {
+                if (current.type !== "int") {
+                    throw new Error("Division requires integer operands");
+                }
+                if (current.value === 0) {
+                    throw new Error("Division by zero is not allowed");
+                }
+                returnValue.value /= current.value;
+            }
+        }
+        return returnValue;
+    }
+    
+
+    visitAnd(node: And) {
+        for (const condition of node.condition) {
+            const result = condition.accept(this);
+            if (result.type !== "bool") {
+                throw new Error("Logical AND requires boolean operands");
+            }
+        }
+    
+        let value = true;
+        for (const condition of node.condition) {
+            const result = condition.accept(this);
+            value = value && result.value;
+            if (!value) break;
+        }
+    
+        return { type: "bool", value };
+    }
+    
+    visitOr(node: Or) {
+        for (const condition of node.condition) {
+            const result = condition.accept(this);
+            if (result.type !== "bool") {
+                throw new Error("Logical OR requires boolean operands");
+            }
+        }
+        let value = false;
+        for (const condition of node.condition) {
+            const result = condition.accept(this);
+            value = value || result.value;
+            if (value) break;
+        }
+    
+        return { type: "bool", value };
+    }
+    
+    visitEqualBool(node: EqualBool) {
+        const left = node.singlevaluebool[0].accept(this);
+        const right = node.singlevaluebool[1].accept(this);
+    
+        if (left.type !== "bool" || right.type !== "bool") {
+            throw new Error("Equality check requires boolean operands");
+        }
+    
+        return { type: "bool", value: left.value === right.value };
+    }
+    
+    visitNotEqualBool(node: NotEqualBool) {
+        const left = node.singlevaluebool[0].accept(this);
+        const right = node.singlevaluebool[1].accept(this);
+    
+        if (left.type !== "bool" || right.type !== "bool") {
+            throw new Error("Inequality check requires boolean operands");
+        }
+    
+        return { type: "bool", value: left.value !== right.value };
+    }
+    
+    visitgetDistance(node: getDistance) {
+        return { type: "int", value: 0 };
+    }
+    
+    visitgetTimestamp(node: getTimestamp) {
+        return { type: "int", value: Date.now() };
+    }
+    
+    visitsetSpeed(node: setSpeed) {
+        const speed = node.speed.accept(this);
+    
+        if (speed.type !== "int") {
+            throw new Error("Speed must be an integer");
+        }
+
+        if(node.unit.accept(this) === "cm"){
+            if(speed > 15){
+                throw new Error("Speed must be less than 15 cm/s");
+            }
+        }else{
+            if(speed > 150){
+                throw new Error("Speed must be less than 150 mm/s");
+            }
+        }
+    
+        return { type: "void" };
+    }
+    
+    visitRotation(node: Rotation) {
+        const angle = node.angle.accept(this);
+    
+        if (angle.type !== "int") {
+            throw new Error("Rotation angle must be an integer");
+        }
+    
+        return { type: "void" };
+    }
+    
+    visitEqualInt(node: EqualInt) {
+        const left = node.arithmeticexpression[0].accept(this);
+        const right = node.arithmeticexpression[1].accept(this);
+    
+        if (left.type !== "int" || right.type !== "int") {
+            throw new Error("Equality check requires integer operands");
+        }
+    
+        return { type: "bool", value: left.value === right.value };
+    }
+    
+    visitNotEqualInt(node: NotEqualInt) {
+        const left = node.arithmeticexpression[0].accept(this);
+        const right = node.arithmeticexpression[1].accept(this);
+    
+        if (left.type !== "int" || right.type !== "int") {
+            throw new Error("Inequality check requires integer operands");
+        }
+    
+        return { type: "bool", value: left.value !== right.value };
+    }
+    
+    visitGreater(node: Greater) {
+        const left = node.arithmeticexpression[0].accept(this);
+        const right = node.arithmeticexpression[1].accept(this);
+    
+        if (left.type !== "int" || right.type !== "int") {
+            throw new Error("Greater-than comparison requires integer operands");
+        }
+    
+        return { type: "bool", value: left.value > right.value };
+    }
+    
+    visitLower(node: Lower) {
+        const left = node.arithmeticexpression[0].accept(this);
+        const right = node.arithmeticexpression[1].accept(this);
+    
+        if (left.type !== "int" || right.type !== "int") {
+            throw new Error("Less-than comparison requires integer operands");
+        }
+    
+        return { type: "bool", value: left.value < right.value };
+    }
+    
+    visitMm(node: mm) {
+        return { type: "int", value: node.accept(this).value };
+    }
+    
+    visitCm(node: cm) {
+        return { type: "int", value: node.accept(this).value * 10 };
+    }
+    
     visitBack(node: Back) {
-        throw new Error("Method not implemented.");
+        const distance = node.expression.accept(this);
+    
+        if (distance.type !== "int") {
+            throw new Error("Back movement distance must be an integer");
+        }
+
+        if(node.unit1.accept(this) === "cm"){
+            if(distance > 300){
+                throw new Error("Distance to parkour must be less than 300 cm");
+            }
+        }else{
+            if(distance > 3000){
+                throw new Error("Distance to parkour must be less than 3000 mm");
+            }
+        }
+    
+        return { type: "void" };
     }
+    
     visitFront(node: Front) {
-        throw new Error("Method not implemented.");
+        const distance = node.expression.accept(this);
+        if (distance.type !== "int") {
+            throw new Error("Front movement distance must be an integer");
+        }
+
+        if(node.unit1.accept(this) === "cm"){
+            if(distance > 300){
+                throw new Error("Distance to parkour must be less than 300 cm");
+            }
+        }else{
+            if(distance > 3000){
+                throw new Error("Distance to parkour must be less than 3000 mm");
+            }
+        }
+    
+        return { type: "void" };
     }
+    
     visitLeftSide(node: LeftSide) {
-        throw new Error("Method not implemented.");
+        const distance = node.expression.accept(this);
+    
+        if (distance.type !== "int") {
+            throw new Error("Left movement distance must be an integer");
+        }
+
+        if(node.unit1.accept(this) === "cm"){
+            if(distance > 300){
+                throw new Error("Distance to parkour must be less than 300 cm");
+            }
+        }else{
+            if(distance > 3000){
+                throw new Error("Distance to parkour must be less than 3000 mm");
+            }
+        }
+    
+        return { type: "void" };
     }
+    
     visitRightSide(node: RightSide) {
-        throw new Error("Method not implemented.");
+        const distance = node.expression.accept(this);
+    
+        if (distance.type !== "int") {
+            throw new Error("Right movement distance must be an integer");
+        }
+
+        if(node.unit1.accept(this) === "cm"){
+            if(distance > 300){
+                throw new Error("Distance to parkour must be less than 300 cm");
+            }
+        }else{
+            if(distance > 3000){
+                throw new Error("Distance to parkour must be less than 3000 mm");
+            }
+        }
+    
+        return { type: "void" };
+    }
+    
+    lookupVar(name: string) {
+        for (let i = this.vars.length - 1; i >= 0; i--) {
+            if (this.vars[i].has(name)) {
+                return this.vars[i].get(name);
+            }
+        }
+        throw new Error(`Variable ${name} not found`);
+    }
+
+    updateVar(name: string, value: any) {
+        for (let i = this.vars.length - 1; i >= 0; i--) {
+            if (this.vars[i].has(name)) {
+                this.vars[i].set(name, value);
+                return;
+            }
+        }
+        throw new Error(`Variable ${name} not found`);
     }
 
     isReturn(object: Statement): object is Return {
@@ -156,6 +449,18 @@ export class typeChecking implements AseRobotVisitor {
     }
 
     isControleStructure(object: Statement): object is ControlStructure {
-        return ('condition' in object && 'statement' in object);
+        return object instanceof If || object instanceof Loop;
     }
+
+    normalizeType(type: string | undefined): string {
+        switch (type ?? '') {
+            case "Nbr":
+                return "int";
+            case "Bool":
+                    return "bool";
+            default:
+                return type ?? '';
+        }
+    }
+    
 }
