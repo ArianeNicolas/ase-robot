@@ -7,7 +7,7 @@ interface Program {
 interface Func {
 	statement: Statement[]
 	name: Str
-	^type: Type
+	type: Type
 	parameter: Parameter[]
 }
 
@@ -19,7 +19,7 @@ interface Type {
 
 interface Parameter {
 	name: Str
-	^type: Type
+	type: Type
 }
 
 interface Condition {
@@ -105,7 +105,7 @@ interface getTimestamp extends RobotFunc {
 }
 
 interface declaVar extends Statement {
-	^type: Type
+	type: Type
 	declaName: Str
 	expression: Expression
 }
@@ -180,7 +180,7 @@ interface ConstInt extends SingleValue {
 }
 
 interface ArithmeticOperation extends ArithmeticExpression {
-	
+
 }
 
 
@@ -202,4 +202,3 @@ interface Bool extends Type {
 
 interface Void extends Type {
 }
-

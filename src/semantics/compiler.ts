@@ -1,175 +1,378 @@
-import { AddExpression, MultExpression } from "../language/generated/ast.js";
-import {And, ArithmeticExpression, ArithmeticOperation, AseRobotVisitor, AssignVar, Back, Bool, BoolCondition, BoolExpression, cm, Comparison, Condition, ConstBool, ConstInt, ControlStructure, declaVar, Else, Elseif, EqualBool, EqualInt, Expression, Front, Func, FunCall, getDistance, getTimestamp, Greater, If, LeftSide, Loop, Lower, mm, Movement, Nbr, NotEqualBool, NotEqualInt, Or, Parameter, Program, Return, RightSide, RobotFunc, RobotLogic, Rotation, setSpeed, SingleValue, SingleValueBool, Statement, Type, Unit, Var, Void} from "../language/visitor.js"
+import {
+  AddExpression,
+  And,
+  AseRobotVisitor,
+  AssignVar,
+  Back,
+  ConstBool,
+  cm,
+  mm,
+  ConstInt,
+  declaVar,
+  Else,
+  Elseif,
+  EqualBool,
+  EqualInt,
+  Front,
+  Func,
+  FunCall,
+  getDistance,
+  getTimestamp,
+  Greater,
+  If,
+  LeftSide,
+  Loop,
+  Lower,
+  MultExpression,
+  NotEqualBool,
+  NotEqualInt,
+  Or,
+  Program,
+  Return,
+  RightSide,
+  Rotation,
+  setSpeed,
+  Var,
+  Parameter,
+} from "../language/visitor.js";
 
 export class Compiler implements AseRobotVisitor {
-    visitCm(node: cm) {
-        throw new Error("Method not implemented.");
+  program: string = `#include <PinChangeInt.h>
+#include <PinChangeIntConfig.h>
+#include <EEPROM.h>
+#define _NAMIKI_MOTOR
+#include <fuzzy_table.h>
+#include <PID_Beta6.h>
+#include <MotorWheel.h>
+#include <Omni4WD.h>
+
+irqISR(irq1, isr1);
+MotorWheel wheel1(3, 2, 4, 5, &irq1);
+
+irqISR(irq2, isr2);
+MotorWheel wheel2(11, 12, 14, 15, &irq2);
+
+irqISR(irq3, isr3);
+MotorWheel wheel3(9, 8, 16, 17, &irq3);
+
+irqISR(irq4, isr4);
+MotorWheel wheel4(10, 7, 18, 19, &irq4);
+
+Omni4WD Omni(&wheel1, &wheel2, &wheel3, &wheel4);
+int SPEED_ROBOT = Omni.getCarSpeedMMPS();
+
+void setup(){
+  TCCR1B = TCCR1B & 0xf8 | 0x01; // Pin9,Pin10 PWM 31250Hz
+  TCCR2B = TCCR2B & 0xf8 | 0x01; // Pin3,Pin11 PWM 31250Hz
+
+  Omni.PIDEnable(0.31, 0.01, 0, 10);
+}
+
+void forward_robot(int distance) {
+  Omni.setCarAdvance(SPEED_ROBOT);
+  Omni.delayMS(distance/SPEED_ROBOT);
+  Omni.setCarStop();
+}
+
+void backward_robot(int distance) {
+  Omni.setCarBackoff(SPEED_ROBOT);
+  Omni.delayMS(distance/SPEED_ROBOT);
+  Omni.setCarStop();
+}
+
+void leftside_robot(int distance) {
+  Omni.setCarLeft(SPEED_ROBOT);
+  Omni.delayMS(distance/SPEED_ROBOT);
+  Omni.setCarStop();
+}
+
+void rightside_robot(int distance) {
+  Omni.setCarRight(SPEED_ROBOT);
+  Omni.delayMS(distance/SPEED_ROBOT);
+  Omni.setCarStop();
+}
+
+void rotate_robot(int angle){
+  Omni.setCarRotate(angle);
+}
+
+void set_speed_robot(int speed) {
+  Omni.setCarSpeedMMPS(speed);
+  SPEED_ROBOT = speed;
+}
+
+void get_time_robot() {
+  return millis();
+}
+
+void loop(){
+  entry();
+}
+`;
+
+  visitMultExpression(node: MultExpression): String {
+    let returnValue = node.singlevalue[0].accept(this);
+    for (let i = 1; i < node.singlevalue.length; i++) {
+      if (node.op[i - 1] === "*") {
+        returnValue = returnValue + " * ";
+      } else if (node.op[i - 1] === "/") {
+        returnValue = returnValue + " / ";
+      }
+      if (node.singlevalue[i].$type.toString() == "AddExpression") {
+        returnValue += "(" + node.singlevalue[i].accept(this) + ")";
+      } else returnValue += node.singlevalue[i].accept(this);
     }
-    visitMm(node: mm) {
-        throw new Error("Method not implemented.");
+    return returnValue;
+  }
+  visitAddExpression(node: AddExpression): String {
+    let returnValue = node.multexpression[0].accept(this);
+    for (let i = 1; i < node.multexpression.length; i++) {
+      if (node.op[i - 1] === "+") {
+        let add = node.multexpression[i].accept(this);
+        returnValue = returnValue + " + " + add;
+      } else if (node.op[i - 1] === "-") {
+        returnValue = returnValue + " - " + node.multexpression[i].accept(this);
+      }
     }
-    visitOr(node: Or) {
-        throw new Error("Method not implemented.");
+    return returnValue;
+  }
+
+  visitElse(node: Else): String {
+    let returnString = "else {\n";
+    node.statement.forEach(
+      (statement) => (returnString += statement.accept(this) + ";\n"),
+    );
+    returnString += "}";
+    return returnString;
+  }
+
+  visitElseif(node: Elseif): String {
+    let returnString = "else if(" + node.condition.accept(this) + "){\n";
+    node.statement.forEach(
+      (statement) => (returnString += statement.accept(this) + ";\n"),
+    );
+    returnString += "}";
+    return returnString;
+  }
+
+  visitFunc(node: Func): String {
+    let returnString = "";
+    if (node.type.$type.toString() == "Void") {
+      returnString += "void ";
+    } else if (node.type.$type.toString() == "Nbr") {
+      returnString += "int ";
+    } else {
+      returnString += "bool ";
+    }
+    returnString += node.name + "(";
+
+    if (node.parameter.length > 0) {
+      returnString += node.parameter[0].accept(this);
+      for (let i = 1; i < node.parameter.length; i++) {
+        returnString += ", " + node.parameter[i].accept(this);
+      }
     }
 
-    visitCondition(node: Condition) {
-        throw new Error("Method not implemented.");
-    }
-    visitElse(node: Else) {
-        throw new Error("Method not implemented.");
-    }
-    visitElseif(node: Elseif) {
-        throw new Error("Method not implemented.");
-    }
-    visitExpression(node: Expression) {
-        throw new Error("Method not implemented.");
-    }
-    visitFunc(node: Func) {
-        throw new Error("Method not implemented.");
-    }
-    visitControlStructure(node: ControlStructure) {
-        throw new Error("Method not implemented.");
-    }
-    visitParameter(node: Parameter) {
-        throw new Error("Method not implemented.");
-    }
-    visitStatement(node: Statement) {
-        throw new Error("Method not implemented.");
-    }
-    visitType(node: Type) {
-        throw new Error("Method not implemented.");
-    }
-    visitUnit(node: Unit) {
-        throw new Error("Method not implemented.");
-    }
-    visitFunCall(node: FunCall) {
-        throw new Error("Method not implemented.");
-    }
-    visitBoolCondition(node: BoolCondition) {
-        throw new Error("Method not implemented.");
-    }
-    visitArithmeticExpression(node: ArithmeticExpression) {
-        throw new Error("Method not implemented.");
-    }
-    visitBoolExpression(node: BoolExpression) {
-        throw new Error("Method not implemented.");
-    }
-    visitRobotFunc(node: RobotFunc) {
-        throw new Error("Method not implemented.");
-    }
-    visitAssignVar(node: AssignVar) {
-        throw new Error("Method not implemented.");
-    }
-    visitdeclaVar(node: declaVar) {
-        throw new Error("Method not implemented.");
-    }
-    visitReturn(node: Return) {
-        throw new Error("Method not implemented.");
-    }
-    visitRobotLogic(node: RobotLogic) {
-        throw new Error("Method not implemented.");
-    }
-    visitBool(node: Bool) {
-        throw new Error("Method not implemented.");
-    }
-    visitNbr(node: Nbr) {
-        throw new Error("Method not implemented.");
-    }
-    visitVoid(node: Void) {
-        throw new Error("Method not implemented.");
-    }
-    visitcm(node: cm) {
-        throw new Error("Method not implemented.");
-    }
-    visitmm(node: mm) {
-        throw new Error("Method not implemented.");
-    }
-    visitComparison(node: Comparison) {
-        throw new Error("Method not implemented.");
-    }
-    visitAnd(node: And) {
-        throw new Error("Method not implemented.");
-    }
-    AseRobotVisitor(node: Or) {
-        throw new Error("Method not implemented.");
-    }
-    visitEqualBool(node: EqualBool) {
-        throw new Error("Method not implemented.");
-    }
-    visitNotEqualBool(node: NotEqualBool) {
-        throw new Error("Method not implemented.");
-    }
-    visitSingleValueBool(node: SingleValueBool) {
-        throw new Error("Method not implemented.");
-    }
-    visitArithmeticOperation(node: ArithmeticOperation) {
-        throw new Error("Method not implemented.");
-    }
-    visitSingleValue(node: SingleValue) {
-        throw new Error("Method not implemented.");
-    }
-    visitgetDistance(node: getDistance) {
-        throw new Error("Method not implemented.");
-    }
-    visitgetTimestamp(node: getTimestamp) {
-        throw new Error("Method not implemented.");
-    }
-    visitsetSpeed(node: setSpeed) {
-        throw new Error("Method not implemented.");
-    }
-    visitIf(node: If) {
-        throw new Error("Method not implemented.");
-    }
-    visitLoop(node: Loop) {
-        throw new Error("Method not implemented.");
-    }
-    visitMovement(node: Movement) {
-        throw new Error("Method not implemented.");
-    }
-    visitRotation(node: Rotation) {
-        throw new Error("Method not implemented.");
-    }
-    visitEqualInt(node: EqualInt) {
-        throw new Error("Method not implemented.");
-    }
-    visitNotEqualInt(node: NotEqualInt) {
-        throw new Error("Method not implemented.");
-    }
-    visitGreater(node: Greater) {
-        throw new Error("Method not implemented.");
-    }
-    visitLower(node: Lower) {
-        throw new Error("Method not implemented.");
-    }
-    visitConstBool(node: ConstBool) {
-        throw new Error("Method not implemented.");
-    }
-    visitVar(node: Var) {
-        throw new Error("Method not implemented.");
-    }
-    visitConstInt(node: ConstInt) {
-        throw new Error("Method not implemented.");
-    }
-    visitBack(node: Back) {
-        throw new Error("Method not implemented.");
-    }
-    visitFront(node: Front) {
-        throw new Error("Method not implemented.");
-    }
-    visitLeftSide(node: LeftSide) {
-        throw new Error("Method not implemented.");
-    }
-    visitRightSide(node: RightSide) {
-        throw new Error("Method not implemented.");
-    }
-    visitProgram(node: Program) {
-        throw new Error("Method not implemented.");
-    }
-    visitMultExpression(node: MultExpression) {
-        throw new Error("Method not implemented.");
-    }
-    visitAddExpression(node: AddExpression) {
-        throw new Error("Method not implemented.");
-    }
+    returnString += ") {\n";
 
+    node.statement.forEach((statement) => {
+      returnString += statement.accept(this) + ";\n";
+    });
+    returnString += "}\n\n";
+    return returnString;
+  }
+
+  visitParam(node: Parameter): String {
+    let returnString = "";
+    if (node.type.$type.toString() == "Void") {
+      returnString += "void ";
+    } else if (node.type.$type.toString() == "Nbr") {
+      returnString += "int ";
+    } else {
+      returnString += "bool ";
+    }
+    returnString += node.name;
+    return returnString;
+  }
+  visitFunCall(node: FunCall): String {
+    let returnString = node.callName + "(";
+    if (node.parameters.length > 0) {
+      returnString += node.parameters[0].accept(this);
+      for (let i = 1; i < node.parameters.length; i++) {
+        returnString += ", " + node.parameters[0].accept(this);
+      }
+    }
+    returnString += ")";
+    return returnString;
+  }
+
+  visitAssignVar(node: AssignVar): String {
+    return node.var_to_assign.name + " = " + node.expression.accept(this);
+  }
+
+  visitdeclaVar(node: declaVar): String {
+    let returnString = "";
+    if (node.type.$type.toString() == "Void") {
+      returnString += "void ";
+    } else if (node.type.$type.toString() == "Nbr") {
+      returnString += "int ";
+    } else {
+      returnString += "bool ";
+    }
+    returnString += node.declaName + " = " + node.expression.accept(this);
+    return returnString;
+  }
+
+  visitReturn(node: Return): String {
+    return "return " + node.return.accept(this);
+  }
+
+  visitAnd(node: And): String {
+    let returnValue = node.condition[0].accept(this);
+    for (let i = 1; i < node.condition.length; i++) {
+      returnValue = returnValue + " && ";
+      if (node.condition[i].$type.toString() == "Or") {
+        returnValue += "(" + node.condition[i].accept(this) + ")";
+      } else {
+        returnValue += node.condition[i].accept(this);
+      }
+    }
+    return returnValue;
+  }
+  visitOr(node: Or): String {
+    let returnValue = node.condition[0].accept(this);
+    for (let i = 1; i < node.condition.length; i++) {
+      returnValue = returnValue + " || " + node.condition[i].accept(this);
+    }
+    return returnValue;
+  }
+  visitEqualBool(node: EqualBool): String {
+    return (
+      node.singlevaluebool[0].accept(this) +
+      " == " +
+      node.singlevaluebool[1].accept(this)
+    );
+  }
+  visitNotEqualBool(node: NotEqualBool): String {
+    return (
+      node.singlevaluebool[0].accept(this) +
+      " != " +
+      node.singlevaluebool[1].accept(this)
+    );
+  }
+  visitgetDistance(node: getDistance): String {
+    throw new Error("Method not implemented");
+  }
+  visitgetTimestamp(node: getTimestamp): String {
+    return "get_time_robot()";
+  }
+  visitsetSpeed(node: setSpeed): String {
+    let newSpeed = node.speed.accept(this);
+    if (node.unit.$type.toString() == "cm") {
+      newSpeed = newSpeed += " * 10";
+    }
+    return "set_speed_robot(" + newSpeed + ")";
+  }
+  visitIf(node: If): any {
+    let returnString = "if (" + node.condition.accept(this) + ") {\n";
+    node.statement.forEach(
+      (statement) => (returnString += statement.accept(this) + ";\n"),
+    );
+    returnString += "}";
+    return returnString;
+  }
+
+  visitLoop(node: Loop): String {
+    let returnString = "while (" + node.condition.accept(this) + ") {\n";
+    node.statement.forEach(
+      (statement) => (returnString += statement.accept(this) + ";\n"),
+    );
+    returnString += "}";
+    return returnString;
+  }
+
+  visitRotation(node: Rotation): String {
+    return "rotate_robot(" + node.angle.accept(this) + ")";
+  }
+  visitEqualInt(node: EqualInt): String {
+    return (
+      node.arithmeticexpression[0].accept(this) +
+      " == " +
+      node.arithmeticexpression[1].accept(this)
+    );
+  }
+  visitNotEqualInt(node: NotEqualInt): String {
+    return (
+      node.arithmeticexpression[0].accept(this) +
+      " != " +
+      node.arithmeticexpression[1].accept(this)
+    );
+  }
+
+  visitGreater(node: Greater): String {
+    return (
+      node.arithmeticexpression[0].accept(this) +
+      " > " +
+      node.arithmeticexpression[1].accept(this)
+    );
+  }
+  visitLower(node: Lower): String {
+    return (
+      node.arithmeticexpression[0].accept(this) +
+      " < " +
+      node.arithmeticexpression[1].accept(this)
+    );
+  }
+  visitConstBool(node: ConstBool): String {
+    return node.BoolValue.toString();
+  }
+
+  visitVar(node: Var): String {
+    return node.name;
+  }
+
+  visitConstInt(node: ConstInt): String {
+    return node.integerValue.toString();
+  }
+
+  visitBack(node: Back) {
+    let dist = node.expression.accept(this);
+    if (node.unit1.$type.toString() == "cm") {
+      dist = dist += " * 10";
+    }
+    return "backward_robot(" + dist + ")";
+  }
+  visitFront(node: Front) {
+    let dist = node.expression.accept(this);
+    if (node.unit1.$type.toString() == "cm") {
+      dist = dist += " * 10";
+    }
+    return "forward_robot(" + dist + ")";
+  }
+  visitLeftSide(node: LeftSide) {
+    let dist = node.expression.accept(this);
+    if (node.unit1.$type.toString() == "cm") {
+      dist = dist += " * 10";
+    }
+    return "leftside_robot(" + dist + ")";
+  }
+  visitRightSide(node: RightSide) {
+    let dist = node.expression.accept(this);
+    if (node.unit1.$type.toString() == "cm") {
+      dist = dist += " * 10";
+    }
+    return "rightside_robot(" + dist + ")";
+  }
+
+  visitCm(node: cm): void {}
+
+  visitMm(node: mm): void {}
+
+  visitProgram(node: Program): String {
+    let returnString = this.program;
+    node.Func.forEach((func) => {
+      returnString += func.accept(this);
+    });
+    return returnString;
+  }
 }

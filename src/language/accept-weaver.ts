@@ -50,6 +50,7 @@ export class AseRobotAcceptWeaver {
     MultExpression: this.weaveMultExpression,
     mm: this.weaveMm,
     cm: this.weaveCm,
+    Parameter: this.weaveParam,
   };
 
   weaveMm(node: InterfaceAST.mm): void {
@@ -87,6 +88,12 @@ export class AseRobotAcceptWeaver {
   weaveOr(node: InterfaceAST.Or): void {
     (<any>node).accept = (AseRobotVisitor: AseRobotVisitor) => {
       return AseRobotVisitor.visitOr(node as unknown as ClassAST.Or);
+    };
+  }
+
+  weaveParam(node: InterfaceAST.Parameter): void {
+    (<any>node).accept = (AseRobotVisitor: AseRobotVisitor) => {
+      return AseRobotVisitor.visitParam(node as unknown as ClassAST.Parameter);
     };
   }
 

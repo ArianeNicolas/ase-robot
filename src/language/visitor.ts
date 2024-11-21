@@ -35,6 +35,7 @@ export interface AseRobotVisitor {
   visitFront(node: Front): any;
   visitLeftSide(node: LeftSide): any;
   visitRightSide(node: RightSide): any;
+  visitParam(node: Parameter): any;
 }
 
 export class Condition implements ASTInterfaces.Condition {
