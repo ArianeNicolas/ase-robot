@@ -1,0 +1,8 @@
+let void entry () {
+    var number count = 0
+    count = square(count)
+}
+
+let void square(number factor){
+    return factor*factor
+}
