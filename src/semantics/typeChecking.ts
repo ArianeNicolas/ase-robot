@@ -271,12 +271,12 @@ export class typeChecking implements AseRobotVisitor {
             throw new Error("Speed must be an integer");
         }
 
-        if(node.unit.accept(this) === "cm"){
-            if(speed > 15){
+        if(node.unit.$type.toString() === "cm"){
+            if(speed.value > 15){
                 throw new Error("Speed must be less than 15 cm/s");
             }
         }else{
-            if(speed > 150){
+            if(speed.value > 150){
                 throw new Error("Speed must be less than 150 mm/s");
             }
         }
@@ -353,12 +353,12 @@ export class typeChecking implements AseRobotVisitor {
             throw new Error("Back movement distance must be an integer");
         }
 
-        if(node.unit1.accept(this) === "cm"){
-            if(distance > 300){
+        if(node.unit1.$type.toString() === "cm"){
+            if(distance.value > 300){
                 throw new Error("Distance to parkour must be less than 300 cm");
             }
         }else{
-            if(distance > 3000){
+            if(distance.value > 3000){
                 throw new Error("Distance to parkour must be less than 3000 mm");
             }
         }
@@ -372,12 +372,12 @@ export class typeChecking implements AseRobotVisitor {
             throw new Error("Front movement distance must be an integer");
         }
 
-        if(node.unit1.accept(this) === "cm"){
-            if(distance > 300){
+        if(node.unit1.$type.toString() === "cm"){
+            if(distance.value > 300){
                 throw new Error("Distance to parkour must be less than 300 cm");
             }
         }else{
-            if(distance > 3000){
+            if(distance.value > 3000){
                 throw new Error("Distance to parkour must be less than 3000 mm");
             }
         }
@@ -392,12 +392,12 @@ export class typeChecking implements AseRobotVisitor {
             throw new Error("Left movement distance must be an integer");
         }
 
-        if(node.unit1.accept(this) === "cm"){
-            if(distance > 300){
+        if(node.unit1.$type.toString() === "cm"){
+            if(distance.value > 300){
                 throw new Error("Distance to parkour must be less than 300 cm");
             }
         }else{
-            if(distance > 3000){
+            if(distance.value > 3000){
                 throw new Error("Distance to parkour must be less than 3000 mm");
             }
         }
@@ -412,12 +412,12 @@ export class typeChecking implements AseRobotVisitor {
             throw new Error("Right movement distance must be an integer");
         }
 
-        if(node.unit1.accept(this) === "cm"){
-            if(distance > 300){
+        if(node.unit1.$type.toString() === "cm"){
+            if(distance.value > 300){
                 throw new Error("Distance to parkour must be less than 300 cm");
             }
         }else{
-            if(distance > 3000){
+            if(distance.value > 3000){
                 throw new Error("Distance to parkour must be less than 3000 mm");
             }
         }

@@ -60,6 +60,8 @@ export async function interprate(aserobot: string, scene: Scene): Promise<Scene>
   const model = await extractAstNodeFromString<Program>(aserobot, services);
   scene = new BaseScene();
   const interpreter = new Interpreter(scene);
+  const typeChecker = new typeChecking();
+  model.accept(typeChecker);
   model.accept(interpreter);
   return scene;
 }
