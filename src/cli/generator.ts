@@ -4,6 +4,7 @@ import { CompositeGeneratorNode, NL, toString } from "langium";
 import * as path from "node:path";
 import { extractDestinationAndName } from "./cli-util.js";
 import { Compiler } from "../semantics/compiler.js";
+import { typeChecking } from "../semantics/typeChecking.js";
 
 export function generateJavaScript(
   program: Program,
@@ -28,10 +29,13 @@ export function generateJavaScript(
 
 export function compileArduino(program: Program, fileName: string) {
   const compiler = new Compiler();
+  const typeChecker = new typeChecking();
+  program.accept(typeChecker);
   let arduino_string = program.accept(compiler);
 
   const data = extractDestinationAndName(fileName, ".");
   const generatedFilePath = `${path.join(".", data.name)}.ino`;
 
   fs.writeFileSync(generatedFilePath, arduino_string);
+  console.log("Compiled successfully !");
 }

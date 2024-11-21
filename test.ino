@@ -70,11 +70,22 @@ void loop(){
   entry();
 }
 void entry() {
+set_speed_robot(100);
 int count = 0;
-count = square(count);
+while (count < 5) {
+count = count + 1;
+square();
+};
 }
 
-void square(int factor) {
-return factor * factor;
+void square() {
+forward_robot(30 * 10);
+rotate_robot(90);
+forward_robot(90 * 10);
+rotate_robot(90);
+forward_robot(30 * 10);
+rotate_robot(90);
+forward_robot(90 * 10);
+rotate_robot(90);
 }
 

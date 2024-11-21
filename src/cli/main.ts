@@ -29,6 +29,8 @@ export const compile = async (
 ): Promise<void> => {
   const services = createAseRobotServices(NodeFileSystem).AseRobot;
   const model = await extractAstNode<Program>(fileName, services);
+  const document = await extractDocument(fileName, services);
+  document.parseResult;
   compileArduino(model, fileName);
 };
 
