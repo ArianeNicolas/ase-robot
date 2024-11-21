@@ -9,7 +9,7 @@ function setup() {
 }
 
 function draw() {
-  background(0);
+  background("#2d2a2e");
   stroke(255);
   strokeWeight(1);
 
@@ -34,7 +34,6 @@ function updateRobot(){
   window.p5robot.x = map(window.time, lastKnownState.time, nextKnownState.time, lastKnownState.pos.x, nextKnownState.pos.x, true)
   window.p5robot.y = map(window.time, lastKnownState.time, nextKnownState.time, lastKnownState.pos.y, nextKnownState.pos.y, true)
   window.p5robot.angle = map(window.time, lastKnownState.time, nextKnownState.time, lastKnownState.rad, nextKnownState.rad, true)
-
   if(window.time >= nextKnownState.time){
     window.time = nextKnownState.time;
     window.lastTimestamp++;

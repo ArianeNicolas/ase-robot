@@ -22,24 +22,14 @@ editorConfig.setMainLanguageId("ase-robot");
 editorConfig.setMonarchTokensProvider(monarchSyntax);
 
 let code = `let void entry () {
-    var number count = 0
-    loop count < 5
-    {
-        setSpeed(50 * (count + 1) in mm)
-        count = count + 1
-        square(count)
-    }
+    var number count = 20
+    setSpeed(50 in mm)
+    count = square(count)
+    
 }
 
 let void square(number factor){
-    Forward 500 * factor in mm
-    Clock 90
-    Forward 500 * factor in mm
-    Clock 90
-    Forward 500 * factor in mm
-    Clock 90
-    Forward 500 * factor in mm
-    Clock 90
+    return factor * factor
 }`;
 
 editorConfig.setMainCode(code);

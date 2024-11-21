@@ -239,6 +239,7 @@ export class ArithmeticExpression
   // simply copy-paste the interface fields as public parameters
   // you can find them in generated/ast.ts
   constructor(public $type: "ArithmeticExpression") {}
+  
   accept(AseRobotVisitor: AseRobotVisitor): any {}
 }
 
@@ -625,67 +626,6 @@ export class Var implements ASTInterfaces.Var {
   accept(AseRobotVisitor: AseRobotVisitor): any {}
 }
 
-/*export class Addition implements ASTInterfaces.Addition {
-    // the constructor must take all attribute of the implemented interface
-    // simply copy-paste the interface fields as public parameters
-    // you can find them in generated/ast.ts
-    constructor(public $type: 'Addition'){}
-    $container!: Division | Multiplication;
-    division!: Division[];
-    multiplication!: Multiplication[];
-    $containerProperty?: string | undefined;
-    $containerIndex?: number | undefined;
-    $cstNode?: CstNode | undefined;
-    $document?: LangiumDocument<AstNode> | undefined;
-    accept(AseRobotVisitor: AseRobotVisitor) : any {}
-}
-
-export class Division implements ASTInterfaces.Division {
-    // the constructor must take all attribute of the implemented interface
-    // simply copy-paste the interface fields as public parameters
-    // you can find them in generated/ast.ts
-    constructor(public $type: 'Division'){}
-    $container!: Addition | Substraction;
-    addition!: Addition[];
-    singlevalue!: SingleValue[];
-    substraction!: Substraction[];
-    $containerProperty?: string | undefined;
-    $containerIndex?: number | undefined;
-    $cstNode?: CstNode | undefined;
-    $document?: LangiumDocument<AstNode> | undefined;
-    accept(AseRobotVisitor: AseRobotVisitor) : any {}
-}
-
-export class Multiplication implements ASTInterfaces.Multiplication {
-    // the constructor must take all attribute of the implemented interface
-    // simply copy-paste the interface fields as public parameters
-    // you can find them in generated/ast.ts
-    constructor(public $type: 'Multiplication'){}
-    $container!: Addition | Substraction;
-    addition!: Addition[];
-    singlevalue!: SingleValue[];
-    substraction!: Substraction[];
-    $containerProperty?: string | undefined;
-    $containerIndex?: number | undefined;
-    $cstNode?: CstNode | undefined;
-    $document?: LangiumDocument<AstNode> | undefined;
-    accept(AseRobotVisitor: AseRobotVisitor) : any {}
-}
-
-export class Substraction implements ASTInterfaces.Substraction {
-    // the constructor must take all attribute of the implemented interface
-    // simply copy-paste the interface fields as public parameters
-    // you can find them in generated/ast.ts
-    constructor(public $type: 'Substraction'){}
-    $container!: Division | Multiplication;
-    division!: Division[];
-    multiplication!: Multiplication[];
-    $containerProperty?: string | undefined;
-    $containerIndex?: number | undefined;
-    $cstNode?: CstNode | undefined;
-    $document?: LangiumDocument<AstNode> | undefined;
-    accept(AseRobotVisitor: AseRobotVisitor) : any {}
-}*/
 
 export class ConstInt implements ASTInterfaces.ConstInt {
   // the constructor must take all attribute of the implemented interface

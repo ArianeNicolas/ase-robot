@@ -21,6 +21,8 @@ class Robot {
         fill(255, 0, 0);
         const h = (Math.sqrt(3)/2) * (this.width/3)
         triangle(-0.5*h, -(this.height/6), -0.5*h, this.height/6, 0.5*h, 0);
+        noStroke();
+        fill(255, 255, 255);
         pop();
     }
   

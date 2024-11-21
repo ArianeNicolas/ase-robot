@@ -7,6 +7,8 @@ class Wall {
   }
 
   show() {
+    strokeWeight(8);
+    stroke(153, 102, 255);
     line(this.ax, this.ay, this.bx, this.by);
   }
 }
