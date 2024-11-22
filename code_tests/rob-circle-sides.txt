@@ -1,0 +1,35 @@
+let void entry () {
+  var number count = 0
+  setSpeed(14 in cm)
+  loop count < 38
+  {	
+    Forward 10 in cm
+    Clock 10
+
+    count = count + 1
+  }
+  count = 0
+  loop count < 38
+  {	
+    Backward 10 in cm
+    Clock 10
+
+    count = count + 1
+  }
+  count = 0
+  loop count < 38
+  {	
+    Right 10 in cm
+    Clock 10
+
+    count = count + 1
+  }
+    count = 0
+  loop count < 38
+  {	
+    Left 10 in cm
+    Clock 10
+
+    count = count + 1
+  }
+}

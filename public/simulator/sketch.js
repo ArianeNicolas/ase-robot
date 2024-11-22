@@ -1,11 +1,10 @@
 function setup() {
-  createCanvas(1000, 1000, document.getElementById("simulator"));
+  createCanvas(1000, 1000 , document.getElementById("simulator"));
   window.entities = [];
   window.p5robot = null;
   window.time = 0;
   window.lastTimestamp = 0;
   window.scene = null;
-  window.p5robot = new Robot(1, width/2, height/2);
 }
 
 function draw() {

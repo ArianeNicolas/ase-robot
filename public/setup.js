@@ -21,13 +21,26 @@ editorConfig.setMainLanguageId("ase-robot");
 
 editorConfig.setMonarchTokensProvider(monarchSyntax);
 
-let code = `let number entry () {
-    var number count = square(2)
-    return count
+let code = `let void entry () {
+    setSpeed(150 in mm)
+    var number count = 0
+    loop count < 5
+    {	
+        count = count + 1
+        square()
+    }
 }
-    
-let number square(number fac){
-    return fac}`;
+
+let void square(){
+    Forward 30 in cm
+    Clock 90
+    Forward 300 in mm
+    Clock 90
+    Forward 30 in cm
+    Clock 90
+    Forward 300 in mm
+    Clock 90
+}`;
 
 editorConfig.setMainCode(code);
 
@@ -72,7 +85,7 @@ window.onclick = function (event) {
 // Simulation utility function
 const setupSimulator = (scene) => {
   const wideSide = max(scene.size.x, scene.size.y);
-  let factor = 1000 / wideSide;
+  let factor = 1000/wideSide;
 
   window.scene = scene;
 

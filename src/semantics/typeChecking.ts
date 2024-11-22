@@ -20,12 +20,15 @@ export class typeChecking implements AseRobotVisitor {
     }
 
     visitFunc(node: Func) {
+        for(let param of node.parameter){
+            this.vars[this.vars.length - 1].set(param.name, param.type);
+        }
         for (let statement of node.statement) {
             const isReturn = this.isReturn(statement);
             const isControlStructure = this.isControleStructure(statement);
             const result = statement.accept(this);
             if (isReturn || (isControlStructure && result != null)) {
-                if (result.type != this.normalizeType(this.funcs.get(node.name)?.[0].$type)) {
+                if (this.normalizeType(result.$type)  != this.normalizeType(this.funcs.get(node.name)?.[0].$type)) {
                     throw new Error("Return type does not match function type");
                 }
             }

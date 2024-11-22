@@ -46,16 +46,14 @@ export class Interpreter implements AseRobotVisitor {
 
   constructor(scene: Scene) {
     this.scene = scene;
+    this.scene.robot.speed = 1;
   }
   visitParam(node: Parameter) {}
 
   visitMultExpression(node: MultExpression): number {
-    console.log("type mult = ", node.singlevalue[0].$type);
     let returnValue = node.singlevalue[0].accept(this);
 
     for (let i = 1; i < node.singlevalue.length; i++) {
-      console.log("dans la boucle !");
-      console.log(node.singlevalue[i]);
       if (node.op[i - 1] === "*") {
         let mult = node.singlevalue[i].accept(this);
         returnValue = returnValue * mult;
@@ -64,12 +62,9 @@ export class Interpreter implements AseRobotVisitor {
       }
     }
 
-    console.log("Return Mult: " + returnValue);
-    console.log(node.singlevalue[0]);
     return returnValue;
   }
   visitAddExpression(node: AddExpression): number {
-    console.log("In Add");
     let returnValue = node.multexpression[0].accept(this);
     for (let i = 1; i < node.multexpression.length; i++) {
       if (node.op[i - 1] === "+") {
@@ -97,8 +92,6 @@ export class Interpreter implements AseRobotVisitor {
       const result = statement.accept(this);
 
       if (isReturn || (isControlStructure && result != null)) {
-        //this.vars.pop();
-        console.log("Return VisitFunc: " + result);
         return result;
       }
     }
@@ -115,16 +108,12 @@ export class Interpreter implements AseRobotVisitor {
         this.vars.push(map);
         let returnValue = f.accept(this);
         this.vars.pop();
-        console.log(
-          "at funcall, function " + f.name + " returns " + returnValue,
-        );
         return returnValue;
       }
     }
   }
   visitAssignVar(node: AssignVar) {
     let accept = node.expression.accept(this);
-    console.log("AssignVar for " + node.var_to_assign.name + " gets " + accept);
     this.vars[this.vars.length - 1].set(node.var_to_assign.name, accept);
   }
 
@@ -136,7 +125,6 @@ export class Interpreter implements AseRobotVisitor {
   }
   visitReturn(node: Return): any {
     let accept = node.return.accept(this);
-    console.log("return returns +" + accept);
     return accept;
   }
   visitAnd(node: And): boolean {
@@ -229,11 +217,6 @@ export class Interpreter implements AseRobotVisitor {
     );
   }
   visitGreater(node: Greater): boolean {
-    console.log(
-      node.arithmeticexpression[0].accept(this) +
-        " > " +
-        node.arithmeticexpression[1].accept(this),
-    );
     return (
       node.arithmeticexpression[0].accept(this) >
       node.arithmeticexpression[1].accept(this)
@@ -252,7 +235,6 @@ export class Interpreter implements AseRobotVisitor {
     return this.vars[this.vars.length - 1].get(node.name);
   }
   visitConstInt(node: ConstInt): number {
-    console.log("constInt returns : " + node.integerValue);
     return node.integerValue;
   }
   visitBack(node: Back) {

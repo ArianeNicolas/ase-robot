@@ -1,0 +1,7 @@
+let number entry () {
+    setSpeed(120 in mm)
+    var number count = getDistance()
+    loop getDistance() > 500 {
+        Forward 20 in mm
+    }
+}

@@ -1,0 +1,29 @@
+let void entry () {
+  square()
+  Clock 180
+  Forward 1500 in mm
+  circle()
+  circle()
+}
+
+let void circle() {
+  var number count = 0
+  loop count < 20
+  {	
+    Forward 400 in mm
+    Clock 18
+    count = count + 1
+  }
+}
+
+let void square() {
+  setSpeed(15 in cm)
+  var number count = 0
+  loop count < 4
+  {	
+    Forward 3000 in mm
+    Clock 90
+
+    count = count + 1
+  }
+}
