@@ -67,6 +67,16 @@ export async function interprate(
     scene = new BaseScene();
   } else if (numScene == 2) {
     scene = new BlockScene();
+  } else if (numScene == 3) {
+    scene = new BaseScene();
+  } else if (numScene == 4) {
+    scene = new BaseScene();
+  } else if (numScene == 5) {
+    scene = new BaseScene();
+  } else if (numScene == 6) {
+    scene = new BaseScene();
+  } else if (numScene == 7) {
+    scene = new BaseScene();
   }
   const interpreter = new Interpreter(scene);
   const typeChecker = new typeChecking();

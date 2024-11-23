@@ -218,11 +218,178 @@ let void square(number count){
   loop count < 10
   {
       count = count + 1
-      Forward getTimestamp()*2 in mm
-      Clock 90
+      Forward getTimestamp()/6 in cm
+      ClockRight 90
   }
 }`;
+  } else if (numScene == 4) {
+    newCode = `let void entry () {
+  var number count = 0
+  setSpeed(14 in cm)
+  loop count < 38
+  {	
+    Forward 10 in cm
+    ClockRight 10
+
+    count = count + 1
   }
+  count = 0
+  loop count < 38
+  {	
+    Backward 10 in cm
+    ClockRight 10
+
+    count = count + 1
+  }
+  count = 0
+  loop count < 38
+  {	
+    Right 10 in cm
+    ClockRight 10
+
+    count = count + 1
+  }
+    count = 0
+  loop count < 38
+  {	
+    Left 10 in cm
+    ClockRight 10
+
+    count = count + 1
+  }
+}
+`;} else if (numScene == 5) {
+    newCode = `let void entry () {
+  square()
+  ClockRight 180
+  Forward 1500 in mm
+  circle()
+  circle()
+}
+
+let void circle() {
+  var number count = 0
+  loop count < 20
+  {	
+    Forward 400 in mm
+    ClockRight 18
+    count = count + 1
+  }
+}
+
+let void square() {
+  setSpeed(15 in cm)
+  var number count = 0
+  loop count < 4
+  {	
+    Forward 3000 in mm
+    ClockRight 90
+
+    count = count + 1
+  }
+}`;
+  } else if (numScene == 6) {
+    newCode = `let void entry() {
+  var number counter = 0
+  var number speed = 10
+  var bool obstacleDetected = false
+
+  setSpeed(speed in cm)
+
+  loop counter < 100 {
+    obstacleDetected = detectObstacle()
+    if (obstacleDetected) {
+      avoidObstacle()
+    } else {
+      Forward 10 in cm
+      ClockRight 10
+    }
+    counter = counter + 1
+  }
+
+  Backward 100 in cm
+  ClockRight 180
+  Forward 100 in cm
+}
+
+  let bool detectObstacle() {
+    var number distance = getDistance()
+    if (distance < 20) {
+      return true
+    } else {
+      return false
+    }
+  }
+
+  let void avoidObstacle(){
+    Backward 15 in cm
+    ClockRight 90
+    Forward 10 in cm
+  }
+`} else if (numScene == 7) {
+    newCode = `let void entry() {
+  var number counter = 0
+  var number speed = 12
+  var bool obstacleDetected = false
+  var number batteryLevel = 100
+  var number obstacleCount = 0
+
+  setSpeed(speed in cm)
+
+  loop counter < 200 {
+    obstacleDetected = detectObstacle()
+    if (obstacleDetected and (batteryLevel > 10)) {
+      avoidObstacle()
+      obstacleCount = obstacleCount + 1
+      batteryLevel = batteryLevel - 5
+    } else if (batteryLevel < 10) {
+      conserveBattery()
+    } else {
+      Forward 50 in cm
+      ClockRight counter / 15
+      batteryLevel = batteryLevel - 1
+    }
+    counter = counter + 1
+  }
+
+  if (obstacleCount > 20 or batteryLevel < 15) {
+    ReturnToBase()
+  } else {
+    ExploreFurther()
+  }
+}
+
+let bool detectObstacle() {
+  var number distance = 100
+  var number angle = 20
+  return ((distance < 150) and (angle > 0) and (angle < 90))
+}
+
+let void avoidObstacle() {
+  Backward 100 in cm
+  ClockRight 45
+  Forward 70 in cm
+  ClockRight 90
+}
+
+let void conserveBattery() {
+  setSpeed(5 in cm)
+  Forward 30 in cm
+  ClockRight 45
+}
+
+let void ReturnToBase() {
+  Backward 200 in cm
+  ClockRight 180
+  Forward 300 in cm
+}
+
+let void ExploreFurther() {
+  Forward 200 in cm
+  ClockRight 90
+  Forward 100 in cm
+  ClockRight 90
+}`;}
   const editor = client.getEditor();
   console.log(editor.getValue());
   if (editor) {

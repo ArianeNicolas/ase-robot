@@ -59,7 +59,11 @@ export class Interpreter implements AseRobotVisitor {
         let mult = node.singlevalue[i].accept(this);
         returnValue = returnValue * mult;
       } else if (node.op[i - 1] === "/") {
-        returnValue = returnValue / node.singlevalue[i].accept(this);
+        const diviser = node.singlevalue[i].accept(this)
+        if (diviser === 0) {
+          throw new Error("Division by zero is not allowed");
+        }
+        returnValue = returnValue / diviser;
       }
     }
 
@@ -162,12 +166,10 @@ export class Interpreter implements AseRobotVisitor {
       (Math.pow(intersection!.x - this.scene.robot.pos.x, 2) +
         Math.pow(intersection!.y - this.scene.robot.pos.y, 2)) *
       factor;
-    console.log("getDistance :", dist);
     return Math.sqrt(dist);
   }
   visitgetTimestamp(node: getTimestamp) {
     let time = this.scene.timestamps[this.scene.timestamps.length - 1].time;
-    console.log("time : ", time);
     return time;
   }
   visitsetSpeed(node: setSpeed) {
@@ -263,9 +265,8 @@ export class Interpreter implements AseRobotVisitor {
     }
     if (dist > 5000) {
       throw new Error("Distance to parkour must be less than 5000 mm");
-    } else if (dist > 0) {
-      this.scene.robot.move(dist);
     }
+    this.scene.robot.move(dist);
   }
   visitFront(node: Front) {
     let dist = 0;
@@ -289,9 +290,8 @@ export class Interpreter implements AseRobotVisitor {
     }
     if (dist > 3000) {
       throw new Error("Distance to parkour must be less than 3000 mm");
-    } else if (dist > 0) {
-      this.scene.robot.side(dist);
     }
+    this.scene.robot.side(dist);
   }
   visitRightSide(node: RightSide) {
     let dist = 0;

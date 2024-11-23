@@ -81,6 +81,14 @@ export class typeChecking implements AseRobotVisitor {
         func.type,
         func.parameter.map((param) => param.type),
       ]);
+      this.vars.push(new Map<string, any>());
+      if (func.parameter[0] !== undefined) {
+        this.vars[this.vars.length - 1].set(
+        func.parameter[0].name,
+        this.normalizeType(func.parameter[0].type.$type),
+      );
+      }
+      
       if (func.name === "entry") {
         isEntry = true;
       }
@@ -162,6 +170,7 @@ export class typeChecking implements AseRobotVisitor {
       throw new Error(`Type mismatch in declaration of ${node.declaName}`);
     }
 
+
     this.vars[this.vars.length - 1].set(node.declaName, value);
   }
 
@@ -206,46 +215,50 @@ export class typeChecking implements AseRobotVisitor {
   visitAddExpression(node: AddExpression) {
     let returnValue = node.multexpression[0].accept(this);
 
+    if (returnValue.type == "bool" || returnValue == "bool") {
+      return { type: "bool", value: true };
+    }
+
     for (let i = 1; i < node.multexpression.length; i++) {
       const current = node.multexpression[i].accept(this);
 
       if (node.op[i - 1] === "+") {
-        if (current.type !== "int") {
+        if (current.type !== "int" && current !== "int") {
           throw new Error("Addition requires integer operands");
         }
         returnValue.value += current.value;
       } else if (node.op[i - 1] === "-") {
-        if (current.type !== "int") {
+        if (current.type !== "int" && current !== "int") {
           throw new Error("Soustraction requires integer operands");
         }
         returnValue.value -= current.value;
       }
     }
 
-    return returnValue;
+    return { type: "int", value: 1 };
   }
 
   visitMultExpression(node: MultExpression) {
     let returnValue = node.singlevalue[0].accept(this);
+    if (returnValue.type == "Bool" || returnValue == "Bool") {
+      return { type: "bool", value: true };
+    }
 
     for (let i = 1; i < node.singlevalue.length; i++) {
       const current = node.singlevalue[i].accept(this);
       if (node.op[i - 1] === "*") {
-        if (current.type !== "int") {
+        if (current.type !== "int" && current !== "int") {
           throw new Error("Multiplication requires integer operands");
         }
-        returnValue.value *= current.value;
+        returnValue= { type: "int", value: 1 };
       } else if (node.op[i - 1] === "/") {
-        if (current.type !== "int") {
+        if (current.type !== "int" && current !== "int") {
           throw new Error("Division requires integer operands");
         }
-        if (current.value === 0) {
-          throw new Error("Division by zero is not allowed");
-        }
-        returnValue.value /= current.value;
+        returnValue= { type: "int", value: 1 };
       }
     }
-    return returnValue;
+    return { type: "int", value: 1 };
   }
 
   visitAnd(node: And) {
