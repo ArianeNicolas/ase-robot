@@ -4,19 +4,19 @@ import 'tP_ASE-types'
 import 'XMLType-types'
 
 entry Program returns Program:
-    Func+=Func  (Func+=Func  )* 
+    Func+=Func  (Func+=Func  )*
 ;
 
 Statement returns Statement:
-    If | Loop | Front | Back | RightSide | Rotation | setSpeed | declaVar | FunCall | Return | AssignVar | LeftSide 
+    If | Loop | Front | Back | RightSide | TurnLeft | TurnRight | setSpeed | declaVar | FunCall | Return | AssignVar | LeftSide
 ;
 
 Type returns Type:
-    Nbr | Bool | Void 
+    Nbr | Bool | Void
 ;
 
 Condition returns Condition:
-    BoolCondition | ArithmeticCondition 
+    BoolCondition | ArithmeticCondition
 ;
 
 Expression returns Expression:
@@ -24,7 +24,7 @@ Expression returns Expression:
 ;
 
 Unit returns Unit:
-    mm | cm 
+    mm | cm
 ;
 
 SingleValue returns SingleValue:
@@ -40,7 +40,7 @@ ArithmeticExpression returns ArithmeticExpression:
 ;
 
 AddExpression returns AddExpression:
-    multexpression+=MultExpression (op=('+' | '-') multexpression+=MultExpression)* 
+    multexpression+=MultExpression (op=('+' | '-') multexpression+=MultExpression)*
 ;
 
 BoolExpression returns BoolExpression:
@@ -56,7 +56,7 @@ Comparison returns Comparison:
 ;
 
 BoolCondition returns BoolCondition:
-    EqualBool | NotEqualBool | Or 
+    EqualBool | NotEqualBool | Or
 ;
 
 MultExpression returns MultExpression:
@@ -64,12 +64,12 @@ MultExpression returns MultExpression:
 ;
 
 Func returns Func:
-    'let' ^type=Type name=ID '(' (parameter+=Parameter  ("," parameter+=Parameter  )*)? ')' '{' (statement+=Statement  )* '}'  
+    'let' ^type=Type name=ID '(' (parameter+=Parameter  ("," parameter+=Parameter  )*)? ')' '{' (statement+=Statement  )* '}'
 ;
 
 
 Parameter returns Parameter:
-    ^type=Type name=ID 
+    ^type=Type name=ID
 ;
 
 If returns If:
@@ -77,47 +77,51 @@ If returns If:
 ;
 
 Elseif returns Elseif:
-    'else' 'if' condition=Condition '{' (statement+=Statement)* '}'  
+    'else' 'if' condition=Condition '{' (statement+=Statement)* '}'
 ;
 
 Else returns Else:
-    'else' '{' (statement+=Statement)* '}'  
+    'else' '{' (statement+=Statement)* '}'
 ;
 
 Loop returns Loop:
-    'loop' condition=Condition '{' (statement+=Statement)* '}'  
+    'loop' condition=Condition '{' (statement+=Statement)* '}'
 ;
 
 Front returns Front:
-    'Forward' expression=ArithmeticExpression unit1=Unit 
+    'Forward' expression=ArithmeticExpression unit1=Unit
 ;
 
 Back returns Back:
-    'Backward' expression=ArithmeticExpression unit1=Unit 
+    'Backward' expression=ArithmeticExpression unit1=Unit
 ;
 
 RightSide returns RightSide:
     'Right' expression=ArithmeticExpression unit1=Unit
 ;
 
-Rotation returns Rotation:
-    'Clock' angle=ArithmeticExpression
+TurnLeft returns TurnLeft:
+    'ClockLeft' angle=ArithmeticExpression
+;
+
+TurnRight returns TurnRight:
+    'ClockRight' angle=ArithmeticExpression
 ;
 
 setSpeed returns setSpeed:
-    'setSpeed(' speed=ArithmeticExpression unit=Unit ')'  
+    'setSpeed(' speed=ArithmeticExpression unit=Unit ')'
 ;
 
 getDistance returns getDistance:
-    {getDistance} 'getDistance()'  
+    {getDistance} 'getDistance()'
 ;
 
 getTimestamp returns getTimestamp:
-    {getTimestamp} 'getTimestamp()'  
+    {getTimestamp} 'getTimestamp()'
 ;
 
 declaVar returns declaVar:
-    'var' ^type=Type declaName=ID '=' expression=Expression  
+    'var' ^type=Type declaName=ID '=' expression=Expression
 ;
 
 FunCall returns FunCall:
@@ -129,11 +133,11 @@ Return returns Return:
 ;
 
 AssignVar returns AssignVar:
-    var_to_assign=Var '=' expression=Expression  
+    var_to_assign=Var '=' expression=Expression
 ;
 
 LeftSide returns LeftSide:
-    'Left' expression=ArithmeticExpression unit1=Unit  
+    'Left' expression=ArithmeticExpression unit1=Unit
 ;
 
 Lower returns Lower:
@@ -172,11 +176,11 @@ ConstInt returns ConstInt:
 ;
 
 Var returns Var:
-    name=ID 
+    name=ID
 ;
 
 ConstBool returns ConstBool:
-    BoolValue=BOOL  
+    BoolValue=BOOL
 ;
 
 mm returns mm:
@@ -184,18 +188,17 @@ mm returns mm:
 ;
 
 cm returns cm:
-    {cm} 'in' 'cm' 
+    {cm} 'in' 'cm'
 ;
 
 Nbr returns Nbr:
-    {Nbr} 'number'  
+    {Nbr} 'number'
 ;
 
 Bool returns Bool:
-    {Bool} 'bool'  
+    {Bool} 'bool'
 ;
 
 Void returns Void:
-    {Void} 'void'  
+    {Void} 'void'
 ;
-

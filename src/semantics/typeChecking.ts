@@ -32,7 +32,8 @@ import {
   Program,
   Return,
   RightSide,
-  Rotation,
+  TurnLeft,
+  TurnRight,
   setSpeed,
   Var,
   Parameter,
@@ -332,7 +333,17 @@ export class typeChecking implements AseRobotVisitor {
     return { type: "void" };
   }
 
-  visitRotation(node: Rotation) {
+  visitTurnLeft(node: TurnLeft) {
+    const angle = node.angle.accept(this);
+
+    if (angle.type !== "int") {
+      throw new Error("Rotation angle must be an integer");
+    }
+
+    return { type: "void" };
+  }
+
+  visitTurnRight(node: TurnRight) {
     const angle = node.angle.accept(this);
 
     if (angle.type !== "int") {

@@ -33,7 +33,8 @@ import {
   Program,
   Return,
   RightSide,
-  Rotation,
+  TurnLeft,
+  TurnRight,
   setSpeed,
   Var,
   Parameter,
@@ -212,9 +213,14 @@ export class Interpreter implements AseRobotVisitor {
     }
     return null;
   }
-  visitRotation(node: Rotation) {
+  visitTurnLeft(node: TurnLeft) {
+    this.scene.robot.turn(-node.angle.accept(this));
+  }
+
+  visitTurnRight(node: TurnRight) {
     this.scene.robot.turn(node.angle.accept(this));
   }
+
   visitEqualInt(node: EqualInt): boolean {
     return (
       node.arithmeticexpression[0].accept(this) ===

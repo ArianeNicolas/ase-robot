@@ -27,20 +27,21 @@ let code = `let void entry () {
   var number count = 0
   loop count < 5
   {
-      count = count + 1
-      square()
+    count = count + 1
+    square(count)
   }
 }
 
-let void square(){
-  Forward 30 in cm
-  Clock 90
-  Forward 300 in mm
-  Clock 90
-  Forward 30 in cm
-  Clock 90
-  Forward 300 in mm
-  Clock 90
+let void square(number count){
+  var number dist = 200 + 10 * count
+  Forward dist in cm
+  ClockRight 90
+  Forward dist in cm
+  ClockRight 90
+  Forward dist in cm
+  ClockRight 90
+  Forward dist in cm
+  ClockRight 90
 }`;
 
 editorConfig.setMainCode(code);
@@ -174,24 +175,25 @@ const selectScene = async () => {
   if (numScene == 1) {
     console.log("code 1");
     newCode = `let void entry () {
-    setSpeed(150 in mm)
-    var number count = 0
-    loop count < 5
-    {
-        count = count + 1
-        square()
-    }
+  setSpeed(150 in mm)
+  var number count = 0
+  loop count < 5
+  {
+      count = count + 1
+      square(count)
+  }
 }
 
-let void square(){
-    Forward 300 in cm
-    Clock 90
-    Forward 300 in cm
-    Clock 90
-    Forward 300 in cm
-    Clock 90
-    Forward 300 in cm
-    Clock 90
+let void square(number count){
+  var number dist = 200 + 10 * count
+  Forward dist in cm
+  ClockRight 90
+  Forward dist in cm
+  ClockRight 90
+  Forward dist in cm
+  ClockRight 90
+  Forward dist in cm
+  ClockRight 90
 }`;
   } else if (numScene == 2) {
     console.log("code 2");
@@ -203,7 +205,7 @@ let void square(){
     {
       Forward 30 in cm
     }
-    Clock 90
+    ClockRight 90
     count = count + 1
   }
 }

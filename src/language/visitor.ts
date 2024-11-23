@@ -19,7 +19,8 @@ export interface AseRobotVisitor {
   visitsetSpeed(node: setSpeed): any;
   visitIf(node: If): any;
   visitLoop(node: Loop): any;
-  visitRotation(node: Rotation): any;
+  visitTurnLeft(node: TurnLeft): any;
+  visitTurnRight(node: TurnRight): any;
   visitEqualInt(node: EqualInt): any;
   visitNotEqualInt(node: NotEqualInt): any;
   visitGreater(node: Greater): any;
@@ -239,7 +240,7 @@ export class ArithmeticExpression
   // simply copy-paste the interface fields as public parameters
   // you can find them in generated/ast.ts
   constructor(public $type: "ArithmeticExpression") {}
-  
+
   accept(AseRobotVisitor: AseRobotVisitor): any {}
 }
 
@@ -528,11 +529,25 @@ export class Movement implements ASTInterfaces.Movement {
   accept(AseRobotVisitor: AseRobotVisitor): any {}
 }
 
-export class Rotation implements ASTInterfaces.Rotation {
+export class TurnLeft implements ASTInterfaces.TurnLeft {
   // the constructor must take all attribute of the implemented interface
   // simply copy-paste the interface fields as public parameters
   // you can find them in generated/ast.ts
-  constructor(public $type: "Rotation") {}
+  constructor(public $type: "TurnLeft") {}
+  angle!: ArithmeticExpression;
+  $container?: AstNode | undefined;
+  $containerProperty?: string | undefined;
+  $containerIndex?: number | undefined;
+  $cstNode?: CstNode | undefined;
+  $document?: LangiumDocument<AstNode> | undefined;
+  accept(AseRobotVisitor: AseRobotVisitor): any {}
+}
+
+export class TurnRight implements ASTInterfaces.TurnRight {
+  // the constructor must take all attribute of the implemented interface
+  // simply copy-paste the interface fields as public parameters
+  // you can find them in generated/ast.ts
+  constructor(public $type: "TurnRight") {}
   angle!: ArithmeticExpression;
   $container?: AstNode | undefined;
   $containerProperty?: string | undefined;
@@ -625,7 +640,6 @@ export class Var implements ASTInterfaces.Var {
   $document?: LangiumDocument<AstNode> | undefined;
   accept(AseRobotVisitor: AseRobotVisitor): any {}
 }
-
 
 export class ConstInt implements ASTInterfaces.ConstInt {
   // the constructor must take all attribute of the implemented interface

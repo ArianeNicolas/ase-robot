@@ -34,7 +34,8 @@ export class AseRobotAcceptWeaver {
     setSpeed: this.weavesetSpeed,
     If: this.weaveIf,
     Loop: this.weaveLoop,
-    Rotation: this.weaveRotation,
+    TurnLeft: this.weaveTurnLeft,
+    TurnRight: this.weaveTurnRight,
     EqualInt: this.weaveEqualInt,
     NotEqualInt: this.weaveNotEqualInt,
     Greater: this.weaveGreater,
@@ -203,10 +204,18 @@ export class AseRobotAcceptWeaver {
     };
   }
 
-  weaveRotation(node: InterfaceAST.Rotation): void {
+  weaveTurnLeft(node: InterfaceAST.TurnLeft): void {
     (<any>node).accept = (AseRobotVisitor: AseRobotVisitor) => {
-      return AseRobotVisitor.visitRotation(
-        node as unknown as ClassAST.Rotation,
+      return AseRobotVisitor.visitTurnLeft(
+        node as unknown as ClassAST.TurnLeft,
+      );
+    };
+  }
+
+  weaveTurnRight(node: InterfaceAST.TurnRight): void {
+    (<any>node).accept = (AseRobotVisitor: AseRobotVisitor) => {
+      return AseRobotVisitor.visitTurnRight(
+        node as unknown as ClassAST.TurnRight,
       );
     };
   }

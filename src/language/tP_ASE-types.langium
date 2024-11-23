@@ -86,7 +86,11 @@ interface Back extends Movement {
 interface RightSide extends Movement {
 }
 
-interface Rotation extends RobotLogic {
+interface TurnRight extends RobotLogic {
+	angle: ArithmeticExpression
+}
+
+interface TurnLeft extends RobotLogic {
 	angle: ArithmeticExpression
 }
 

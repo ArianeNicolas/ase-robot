@@ -30,7 +30,8 @@ import {
   Program,
   Return,
   RightSide,
-  Rotation,
+  TurnLeft,
+  TurnRight,
   setSpeed,
   Var,
   Parameter,
@@ -66,34 +67,43 @@ void setup(){
   TCCR2B = TCCR2B & 0xf8 | 0x01; // Pin3,Pin11 PWM 31250Hz
 
   Omni.PIDEnable(0.31, 0.01, 0, 10);
+  entry();
 }
 
 void forward_robot(int distance) {
   Omni.setCarAdvance(SPEED_ROBOT);
-  Omni.delayMS(distance/SPEED_ROBOT);
+  Omni.delayMS(distance/SPEED_ROBOT) * 1000;
   Omni.setCarStop();
 }
 
 void backward_robot(int distance) {
   Omni.setCarBackoff(SPEED_ROBOT);
-  Omni.delayMS(distance/SPEED_ROBOT);
+  Omni.delayMS(distance/SPEED_ROBOT) * 1000;
   Omni.setCarStop();
 }
 
 void leftside_robot(int distance) {
   Omni.setCarLeft(SPEED_ROBOT);
-  Omni.delayMS(distance/SPEED_ROBOT);
+  Omni.delayMS(distance/SPEED_ROBOT) * 1000;
   Omni.setCarStop();
 }
 
 void rightside_robot(int distance) {
   Omni.setCarRight(SPEED_ROBOT);
-  Omni.delayMS(distance/SPEED_ROBOT);
+  Omni.delayMS(distance/SPEED_ROBOT) * 1000;
   Omni.setCarStop();
 }
 
-void rotate_robot(int angle){
-  Omni.setCarRotate(angle);
+void rotateLeft_robot(int angle){
+  Omni.setCarRotateLeft(SPEED_ROBOT);
+  Omni.delayMS(angle/SPEED_ROBOT) * 1000;
+  Omni.setCarStop();
+}
+
+void rotateRight_robot(int angle){
+  Omni.setCarRotateRight(SPEED_ROBOT);
+  Omni.delayMS(angle/SPEED_ROBOT) * 1000;
+  Omni.setCarStop();
 }
 
 void set_speed_robot(int speed) {
@@ -105,9 +115,7 @@ void get_time_robot() {
   return millis();
 }
 
-void loop(){
-  entry();
-}
+void loop(){}
 `;
 
   visitMultExpression(node: MultExpression): String {
@@ -291,9 +299,14 @@ void loop(){
     return returnString;
   }
 
-  visitRotation(node: Rotation): String {
-    return "rotate_robot(" + node.angle.accept(this) + ")";
+  visitTurnLeft(node: TurnLeft): String {
+    return "rotateLeft_robot(" + node.angle.accept(this) + ")";
   }
+
+  visitTurnRight(node: TurnRight): String {
+    return "rotateRight_robot(" + node.angle.accept(this) + ")";
+  }
+
   visitEqualInt(node: EqualInt): String {
     return (
       node.arithmeticexpression[0].accept(this) +
