@@ -21,25 +21,26 @@ editorConfig.setMainLanguageId("ase-robot");
 
 editorConfig.setMonarchTokensProvider(monarchSyntax);
 
+let numScene = 1;
 let code = `let void entry () {
-    setSpeed(150 in mm)
-    var number count = 0
-    loop count < 5
-    {	
-        count = count + 1
-        square()
-    }
+  setSpeed(150 in mm)
+  var number count = 0
+  loop count < 5
+  {
+      count = count + 1
+      square()
+  }
 }
 
 let void square(){
-    Forward 30 in cm
-    Clock 90
-    Forward 300 in mm
-    Clock 90
-    Forward 30 in cm
-    Clock 90
-    Forward 300 in mm
-    Clock 90
+  Forward 30 in cm
+  Clock 90
+  Forward 300 in mm
+  Clock 90
+  Forward 30 in cm
+  Clock 90
+  Forward 300 in mm
+  Clock 90
 }`;
 
 editorConfig.setMainCode(code);
@@ -58,7 +59,7 @@ const lsWorker = new Worker(workerURL.href, {
 client.setWorker(lsWorker);
 
 // keep a reference to a promise for when the editor is finished starting, we'll use this to setup the canvas on load
-const startingPromise = client.startEditor(
+let startingPromise = client.startEditor(
   document.getElementById("monaco-editor-root"),
 );
 
@@ -85,7 +86,7 @@ window.onclick = function (event) {
 // Simulation utility function
 const setupSimulator = (scene) => {
   const wideSide = max(scene.size.x, scene.size.y);
-  let factor = 1000/wideSide;
+  let factor = 1000 / wideSide;
 
   window.scene = scene;
 
@@ -102,7 +103,7 @@ const setupSimulator = (scene) => {
     }
     if (entity.type === "Block") {
       window.entities.push(
-        new Wall(
+        new Block(
           entity.pos.x * factor,
           entity.pos.y * factor,
           entity.size.x * factor,
@@ -129,6 +130,8 @@ const parseAndValidate = async () => {
     "parseAndValidate",
     value,
   );
+  const modal = document.getElementById("validModal");
+  modal.style.display = "block";
 };
 
 const typecheck = async () => {
@@ -158,11 +161,79 @@ const execute = async () => {
     "interprate",
     value,
     window.scene,
+    numScene,
   );
   setupSimulator(scene);
+};
 
+const selectScene = async () => {
+  var e = document.getElementById("scene-select");
+  numScene = e.value;
+  console.log("selectScene : ", numScene);
+  let newCode;
+  if (numScene == 1) {
+    console.log("code 1");
+    newCode = `let void entry () {
+    setSpeed(150 in mm)
+    var number count = 0
+    loop count < 5
+    {
+        count = count + 1
+        square()
+    }
+}
+
+let void square(){
+    Forward 300 in cm
+    Clock 90
+    Forward 300 in cm
+    Clock 90
+    Forward 300 in cm
+    Clock 90
+    Forward 300 in cm
+    Clock 90
+}`;
+  } else if (numScene == 2) {
+    console.log("code 2");
+    newCode = `let void entry () {
+  setSpeed(150 in mm)
+  var number count = 0
+  loop count < 8 {
+    loop getDistance() > 250
+    {
+      Forward 30 in cm
+    }
+    Clock 90
+    count = count + 1
+  }
+}
+
+`;
+  } else if (numScene == 3) {
+    newCode = `let void entry () {
+  setSpeed(150 in mm)
+  var number count = 0
+  loop count < 10
+  {
+      count = count + 1
+      Forward getTimestamp()*2 in mm
+      Clock 90
+  }
+}`;
+  }
+  const editor = client.getEditor();
+  console.log(editor.getValue());
+  if (editor) {
+    console.log("normally changed...");
+    editor.getModel().setValue(newCode);
+  } else {
+    console.error("L'éditeur Monaco n'est pas initialisé !");
+  }
+  window.setup();
+  console.log(editor.getValue());
 };
 
 window.parseAndValidate = parseAndValidate;
 window.typecheck = typecheck;
 window.execute = execute;
+window.selectScene = selectScene;

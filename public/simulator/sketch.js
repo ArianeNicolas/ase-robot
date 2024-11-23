@@ -34,6 +34,7 @@ function updateRobot() {
   const lastKnownState = window.scene.timestamps[window.lastTimestamp];
   const nextKnownState = window.scene.timestamps[window.lastTimestamp + 1];
 
+  console.log("nextKnownState.pos.x :", nextKnownState.pos.x);
   window.p5robot.x = map(
     window.time,
     lastKnownState.time,
@@ -78,8 +79,8 @@ function updateRobot() {
       y2 = last.pos.y;
     }
 
-    stroke("#ff6f61");
-    strokeWeight(3);
+    stroke("#BC81FF");
+    strokeWeight(5);
     line(first.pos.x * factor, first.pos.y * factor, x2 * factor, y2 * factor);
   }
 }

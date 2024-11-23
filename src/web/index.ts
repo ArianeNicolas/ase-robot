@@ -4,7 +4,7 @@ import { createAseRobotServices } from "../language/ase-robot-module.js";
 import { Program } from "../language/visitor.js";
 import chalk from "chalk";
 import { Interpreter } from "../semantics/interpreter.js";
-import { Scene, BaseScene } from "./simulator/scene.js";
+import { BaseScene, BlockScene, Scene } from "./simulator/scene.js";
 import { typeChecking } from "../semantics/typeChecking.js";
 
 /**
@@ -55,10 +55,19 @@ export async function typeCheck(aserobot: string): Promise<Object> {
   return Promise.resolve(model);
 }
 
-export async function interprate(aserobot: string, scene: Scene): Promise<Scene> {
+export async function interprate(
+  aserobot: string,
+  scene: Scene,
+  numScene: number,
+): Promise<Scene> {
   const services = createAseRobotServices(EmptyFileSystem).AseRobot;
   const model = await extractAstNodeFromString<Program>(aserobot, services);
-  scene = new BaseScene();
+  console.log("interprate : scene =", numScene);
+  if (numScene == 1) {
+    scene = new BaseScene();
+  } else if (numScene == 2) {
+    scene = new BlockScene();
+  }
   const interpreter = new Interpreter(scene);
   const typeChecker = new typeChecking();
   model.accept(typeChecker);

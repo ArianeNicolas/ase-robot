@@ -155,20 +155,31 @@ export class Interpreter implements AseRobotVisitor {
   }
   visitgetDistance(node: getDistance) {
     let intersection = this.scene.robot.getRay().intersect(this.scene.entities);
-    return Math.sqrt(
-      Math.pow(intersection!.x - this.scene.robot.pos.x, 2) +
-        Math.pow(intersection!.y - this.scene.robot.pos.y, 2),
-    );
+    const wideSide = Math.max(this.scene.size.x, this.scene.size.y);
+    let factor = 1000 / wideSide;
+    let dist =
+      (Math.pow(intersection!.x - this.scene.robot.pos.x, 2) +
+        Math.pow(intersection!.y - this.scene.robot.pos.y, 2)) *
+      factor;
+    console.log("getDistance :", dist);
+    return Math.sqrt(dist);
   }
   visitgetTimestamp(node: getTimestamp) {
-    return this.scene.timestamps[this.scene.timestamps.length - 1];
+    let time = this.scene.timestamps[this.scene.timestamps.length - 1].time;
+    console.log("time : ", time);
+    return time;
   }
   visitsetSpeed(node: setSpeed) {
     let speed = node.speed.accept(this);
     if (node.unit.accept(this) === "cm") {
-      this.scene.robot.speed = speed / 10;
+      speed = speed / 10;
     } else {
-      this.scene.robot.speed = speed / 100;
+      speed = speed / 100;
+    }
+    if (speed > 1.5) {
+      throw new Error("Speed must be less than 150 mm/s");
+    } else {
+      this.scene.robot.speed = speed;
     }
   }
   visitIf(node: If): any {
@@ -238,31 +249,55 @@ export class Interpreter implements AseRobotVisitor {
     return node.integerValue;
   }
   visitBack(node: Back) {
+    let dist = 0;
     if (node.unit1.accept(this) === "cm") {
-      this.scene.robot.move(-node.expression.accept(this) * 10);
+      dist = -node.expression.accept(this) * 10;
     } else {
-      this.scene.robot.move(-node.expression.accept(this));
+      dist = -node.expression.accept(this);
+    }
+    if (dist > 5000) {
+      throw new Error("Distance to parkour must be less than 5000 mm");
+    } else if (dist > 0) {
+      this.scene.robot.move(dist);
     }
   }
   visitFront(node: Front) {
+    let dist = 0;
     if (node.unit1.accept(this) === "cm") {
-      this.scene.robot.move(node.expression.accept(this) * 10);
+      dist = node.expression.accept(this) * 10;
     } else {
-      this.scene.robot.move(node.expression.accept(this));
+      dist = node.expression.accept(this);
+    }
+    if (dist > 3000) {
+      throw new Error("Distance to parkour must be less than 3000 mm");
+    } else if (dist > 0) {
+      this.scene.robot.move(dist);
     }
   }
   visitLeftSide(node: LeftSide) {
+    let dist = 0;
     if (node.unit1.accept(this) === "cm") {
-      this.scene.robot.side(node.expression.accept(this) * 10);
+      dist = -node.expression.accept(this) * 10;
     } else {
-      this.scene.robot.side(node.expression.accept(this));
+      dist = -node.expression.accept(this);
+    }
+    if (dist > 3000) {
+      throw new Error("Distance to parkour must be less than 3000 mm");
+    } else if (dist > 0) {
+      this.scene.robot.side(dist);
     }
   }
   visitRightSide(node: RightSide) {
+    let dist = 0;
     if (node.unit1.accept(this) === "cm") {
-      this.scene.robot.side(-node.expression.accept(this) * 10);
+      dist = node.expression.accept(this) * 10;
     } else {
-      this.scene.robot.side(-node.expression.accept(this));
+      dist = node.expression.accept(this);
+    }
+    if (dist > 3000) {
+      throw new Error("Distance to parkour must be less than 3000 mm");
+    } else if (dist > 0) {
+      this.scene.robot.side(dist);
     }
   }
 
