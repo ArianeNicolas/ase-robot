@@ -59,7 +59,7 @@ export class Interpreter implements AseRobotVisitor {
         let mult = node.singlevalue[i].accept(this);
         returnValue = returnValue * mult;
       } else if (node.op[i - 1] === "/") {
-        const diviser = node.singlevalue[i].accept(this)
+        const diviser = node.singlevalue[i].accept(this);
         if (diviser === 0) {
           throw new Error("Division by zero is not allowed");
         }
@@ -187,17 +187,44 @@ export class Interpreter implements AseRobotVisitor {
   }
   visitIf(node: If): any {
     if (node.condition.accept(this)) {
-      node.statement.forEach((statement) => {
-        let isReturn = this.isReturn(statement);
+      for (let s of node.statement) {
+        let isReturn = this.isReturn(s);
         if (isReturn) {
-          let returnValue = statement.accept(this);
-          this.vars.pop();
+          let returnValue = s.accept(this);
           return returnValue;
         } else {
-          statement.accept(this);
+          s.accept(this);
         }
-      });
+      }
+    } else {
+      let verified = false;
+      for (var e = 0; e < node.elseif.length; e++) {
+        if (verified == false && node.elseif[e].condition.accept(this)) {
+          verified = true;
+          for (let s of node.elseif[e].statement) {
+            let isReturn = this.isReturn(s);
+            if (isReturn) {
+              let returnValue = s.accept(this);
+              return returnValue;
+            } else {
+              s.accept(this);
+            }
+          }
+        }
+      }
+      if (verified == false && node.else !== undefined) {
+        for (let s of node.else.statement) {
+          let isReturn = this.isReturn(s);
+          if (isReturn) {
+            let returnValue = s.accept(this);
+            return returnValue;
+          } else {
+            s.accept(this);
+          }
+        }
+      }
     }
+
     return null;
   }
   visitLoop(node: Loop): any {
